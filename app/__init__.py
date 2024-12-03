@@ -4,7 +4,7 @@ from .models import Base, engine
 
 
 def create_app():
-    app=Flask(__name__)
+    app=Flask(__name__, template_folder="templates")
     app.config.from_object(Config)
 
     from .email_routes import email_bp
