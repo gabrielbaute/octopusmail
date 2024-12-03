@@ -7,6 +7,10 @@ from config import Config
 
 email_bp=Blueprint("email", __name__)
 
+@email_bp.route("/")
+def index():
+    return "<p>Hello, World!</p>"
+
 @email_bp.route("/send_email", methods=["POST"])
 def send_email():
     data=request.json
