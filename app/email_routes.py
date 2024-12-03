@@ -1,9 +1,13 @@
-from flask import Blueprint, request, jsonify
+import smtplib
+from flask import(Blueprint, request, jsonify)
+
 from core.importcsv import importcsv
 from core.smtpconnect import serverStart, serverQuiet
-from core.mailer import headerCompose, bodyCompose, attachMedia
-import smtplib
+from core.mailer import(headerCompose, bodyCompose, attachMedia) 
+
 from config import Config
+from .db import session
+from .models import Email, List
 
 email_bp=Blueprint("email", __name__)
 
