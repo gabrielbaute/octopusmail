@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}OctopusMail{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bulma.min.css') }}">
-
+    <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
 </head>
 <body>
     <!-- Navbar -->
@@ -37,6 +37,18 @@
     <!-- Main Content -->
     <section class="section">
         <div class="container">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="notification-block">
+                        {% for category, message in messages %}
+                            <div class="notification is-{{ category }}">
+                                <button class="delete"></button>
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
             {% block content %}{% endblock %}
         </div>
     </section>
