@@ -1,5 +1,6 @@
 from flask import Flask
 from config import Config
+from .models import Base, engine
 
 
 def create_app():
@@ -10,3 +11,6 @@ def create_app():
     app.register_blueprint(email_bp)
 
     return app
+
+def initialize_db():
+    Base.metadata.create_all(engine)
