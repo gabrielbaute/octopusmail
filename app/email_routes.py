@@ -22,7 +22,7 @@ email_bp=Blueprint("email", __name__)
 
 @email_bp.route("/")
 def index():
-    return "<p>Hello, World!</p>"
+    return render_template("index.html")
 
 @email_bp.route("/add_email", methods=["GET", "POST"])
 def add_email():

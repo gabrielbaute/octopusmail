@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}OctopusMail{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bulma.min.css') }}">
+
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="/">
+                OctopusMail
+            </a>
+        </div>
+
+        <div id="navbarBasicExample" class="navbar-menu">
+            <div class="navbar-start">
+                <a class="navbar-item" href="/">
+                    Home
+                </a>
+                <a class="navbar-item" href="/add_email">
+                    Add Email
+                </a>
+                <a class="navbar-item" href="/create_list">
+                    Create List
+                </a>
+                <a class="navbar-item" href="/add_to_list">
+                    Add to List
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <section class="section">
+        <div class="container">
+            {% block content %}{% endblock %}
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="content has-text-centered">
+            <p>
+                <strong>OctopusMail</strong> by <a href="https://github.com/gabrielbaute">Gabriel Baute</a>. The source code is licensed under the <a href="http://opensource.org/licenses/mit-license.php">MIT license</a>.
+            </p>
+        </div>
+    </footer>
+</body>
+</html>
