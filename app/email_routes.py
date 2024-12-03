@@ -16,7 +16,7 @@ from core.mailer import(headerCompose, bodyCompose, attachMedia)
 from config import Config
 from .db import session
 from .models import Email, List
-from .forms import EmailForm, ListForm
+from .forms import EmailForm, ListForm, AddToListForm
 
 email_bp=Blueprint("email", __name__)
 
@@ -53,6 +53,21 @@ def create_list():
             flash("List created successfully!", "success")
         return redirect(url_for("email.create_list"))
     return render_template("create_list.html", form=form)
+
+@email_bp.route("/add_to_list", methods=["GET", "POST"])
+def add_to_list():
+    form=AddToListForm()
+    if form.validate_on_submit():
+        email = session.query(Email).filter_by(email=form.email.data).first()
+        email_list = session.query(List).filter_by(name=form.list_name.data).first()
+        if email in email_list:
+            email.lists.append(email_list)
+            session.commit()
+            flash("Email added to list successfully!", "success")
+            return redirect(url_for("email.add_to_list"))
+        else:
+            flash("Email or List not found", "danger")
+    return render_template("add_to_list.html", form=form)
 
 @email_bp.route("/send_email", methods=["POST"])
 def send_email():
