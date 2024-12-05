@@ -17,5 +17,5 @@ class AddToListForm(FlaskForm):
     submit = SubmitField("Add to List")
 
 class CSVUploadForm(FlaskForm):
-    csv_file=FileField("'CSV File", validators=[DataRequired()])
+    csv_file=FileField("CSV File", validators=[DataRequired()])
     submit=SubmitField("Upload CSV")

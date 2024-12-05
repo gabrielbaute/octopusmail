@@ -1,4 +1,6 @@
 import smtplib
+import os
+from werkzeug.utils import secure_filename
 from flask import(
     Blueprint, 
     request, 
@@ -28,7 +30,7 @@ def index():
 def add_email():
     form=EmailForm()
     if form.validate_on_submit():
-        existing_email = session.query(Email).filter_by(email=form.email.data).first()
+        existing_email=session.query(Email).filter_by(email=form.email.data).first()
         if existing_email:
             flash("Email already exists!", "danger")
         else:
@@ -43,7 +45,7 @@ def add_email():
 def create_list():
     form=ListForm()
     if form.validate_on_submit():
-        existing_list = session.query(List).filter_by(name=form.name.data).first()
+        existing_list=session.query(List).filter_by(name=form.name.data).first()
         if existing_list:
             flash("List name already exists!", "danger")
         else:
@@ -58,8 +60,8 @@ def create_list():
 def add_to_list():
     form=AddToListForm()
     if form.validate_on_submit():
-        email = session.query(Email).filter_by(email=form.email.data).first()
-        email_list = session.query(List).filter_by(name=form.list_name.data).first()
+        email=session.query(Email).filter_by(email=form.email.data).first()
+        email_list=session.query(List).filter_by(name=form.list_name.data).first()
         if email in email_list:
             email.lists.append(email_list)
             session.commit()
@@ -68,6 +70,28 @@ def add_to_list():
         else:
             flash("Email or List not found", "danger")
     return render_template("add_to_list.html", form=form)
+
+@email_bp.route("/upload_csv", methods=["GET", "POST"])
+def upload_csv():
+    form=CSVUploadForm()
+    if form.validate_on_submit():
+        # Almacenar el archivo .csv
+        file=form.csv_file.data
+        filename=secure_filename(file.filename)
+        filepath=os.path.join(Config.UPLOAD_FOLDER, filename)
+        file.save(filepath)
+
+        # Leer el archivo .csv
+        receivers=importcsv(filepath)
+        for receiver in receivers:
+            existing_email=session.query(Email).filter_by(email=receiver["email"]).first()
+            if not existing_email:
+                email=Email(email=receiver["email"], name=receiver["name"])
+                session.add(email)
+        session.commit()
+        flash("CSV uploaded and emails added successfully!", "success")
+        return redirect(url_for("email.upload_csv"))
+    return render_template("upload_csv.html", form=form)
 
 @email_bp.route("/send_email", methods=["POST"])
 def send_email():
