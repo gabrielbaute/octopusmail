@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField
+from wtforms import StringField, SubmitField, FileField
 from wtforms.validators import DataRequired, Email
 
 class EmailForm(FlaskForm):
@@ -15,3 +15,7 @@ class AddToListForm(FlaskForm):
     email = StringField("Email", validators=[DataRequired(), Email()])
     list_name = StringField("List Name", validators=[DataRequired()])
     submit = SubmitField("Add to List")
+
+class CSVUploadForm(FlaskForm):
+    csv_file=FileField("'CSV File", validators=[DataRequired()])
+    submit=SubmitField("Upload CSV")

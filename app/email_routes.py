@@ -16,7 +16,7 @@ from core.mailer import(headerCompose, bodyCompose, attachMedia)
 from config import Config
 from .db import session
 from .models import Email, List
-from .forms import EmailForm, ListForm, AddToListForm
+from .forms import EmailForm, ListForm, AddToListForm, CSVUploadForm
 
 email_bp=Blueprint("email", __name__)
 
