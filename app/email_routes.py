@@ -74,6 +74,8 @@ def add_to_list():
 @email_bp.route("/upload_csv", methods=["GET", "POST"])
 def upload_csv():
     form=CSVUploadForm()
+    form.existing_list.choices=[(l.id, l.name) for l in session.query(List).all()]
+
     if form.validate_on_submit():
         # Almacenar el archivo .csv
         file=form.csv_file.data
@@ -81,15 +83,21 @@ def upload_csv():
         filepath=os.path.join(Config.UPLOAD_FOLDER, filename)
         file.save(filepath)
 
+        list_name=form.list_name.data
+        existing_list_id=form.existing_list.data
+
         # Leer el archivo .csv
         receivers=importcsv(filepath)
         list_name=form.list_name.data
 
-        email_list=session.query(List).filter_by(name=list_name).first()
-        if not email_list:
-            email_list=List(name=list_name)
-            session.add(email_list)
-            session.commit()
+        if list_name:
+            email_list=session.query(List).filter_by(name=list_name).first()
+            if not email_list:
+                email_list=List(name=list_name)
+                session.add(email_list)
+                session.commit()
+        else:
+            email_list=session.query(List).get(existing_list_id)
 
         for receiver in receivers:
             if "email" in receiver and "name" in receiver:
