@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Emails List{% endblock %}
+
+{% block content %}
+<h1 class="title">List of Emails</h1>
+<table class="table is-striped is-fullwidth">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Email</th>
+            <th>Name</th>
+            <th>Lists</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for email in emails %}
+        <tr>
+            <td>{{ email.id }}</td>
+            <td>{{ email.email }}</td>
+            <td>{{ email.name }}</td>
+            <td>
+                {% for list in email.lists %}
+                    {{ list.name }}{% if not loop.last %}, {% endif %}
+                {% endfor %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

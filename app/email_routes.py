@@ -134,3 +134,8 @@ def send_email():
     serverQuiet(server)
 
     return jsonify({"status": "success"}), 200
+
+@email_bp.route("/emails")
+def show_emails():
+    emails=session.query(Email).all()
+    return render_template("emails.html", emails=emails)
