@@ -83,11 +83,25 @@ def upload_csv():
 
         # Leer el archivo .csv
         receivers=importcsv(filepath)
+        list_name=form.list_name.data
+
+        email_list=session.query(List).filter_by(name=list_name).first()
+        if not email_list:
+            email_list=List(name=list_name)
+            session.add(email_list)
+            session.commit()
+
         for receiver in receivers:
-            existing_email=session.query(Email).filter_by(email=receiver["email"]).first()
-            if not existing_email:
-                email=Email(email=receiver["email"], name=receiver["name"])
-                session.add(email)
+            if "email" in receiver and "name" in receiver:
+                existing_email=session.query(Email).filter_by(email=receiver["email"]).first()
+                if not existing_email:
+                    email=Email(email=receiver["email"], name=receiver["name"])
+                    session.add(email)
+                    email.lists.append(email_list)
+                else:
+                    existing_email.lists.append(email_list)
+            else:
+                flash(f"Invalid data in row: {receiver}", "danger")
         session.commit()
         flash("CSV uploaded and emails added successfully!", "success")
         return redirect(url_for("email.upload_csv"))

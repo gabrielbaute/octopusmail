@@ -23,13 +23,21 @@
         <div class="box">
           <h3 class="title is-4">Añadir un nuevo correo</h3>
           <p>Agrega correos electrónicos de manera sencilla usando el formulario.</p>
+          <br>
           <a href="{{ url_for('email.add_email') }}" class="button is-link">Añadir Correo</a>
+        </div>
+        <div class="box">
+          <h3 class="title is-4">Añadir desde archivo</h3>
+          <p>Agrega correos electrónicos desde un archivo CSV.</p>
+          <br>
+          <a href="{{ url_for('email.upload_csv') }}" class="button is-link">Subir CSV</a>
         </div>
       </div>
       <div class="column">
         <div class="box">
           <h3 class="title is-4">Crear una nueva lista</h3>
           <p>Crea listas de correos para gestionar tus contactos de manera organizada.</p>
+          <br>
           <a href="{{ url_for('email.create_list') }}" class="button is-link">Crear Lista</a>
         </div>
       </div>
@@ -37,6 +45,7 @@
         <div class="box">
           <h3 class="title is-4">Añadir correos a listas</h3>
           <p>Añade correos electrónicos existentes a tus listas de manera rápida.</p>
+          <br>
           <a href="{{ url_for('email.add_to_list') }}" class="button is-link">Añadir a Lista</a>
         </div>
       </div>
