@@ -23,7 +23,7 @@ Esta es una aplicación de envío de correos utilizando Flask, SQLAlchemy y Bulm
 1. Clona el repositorio:
     ```bash
     git clone https://github.com/gabrielbaute/octopusmail
-    cd mailserver
+    cd octopusmail
     ```
 
 2. Crea y activa un entorno virtual:
