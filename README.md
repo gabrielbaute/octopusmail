@@ -45,8 +45,14 @@ Esta es una aplicación de envío de correos utilizando Flask, SQLAlchemy y Bulm
     SMTP_SERVER=tu_smtp_server
     SMTP_PORT=tu_smtp_port
     EMAIL=tu_email
-    APP_PASS=tu_contraseña_de_app
-    FROM=tu_email
+    APP_PASS=tu_contraseña_de_correo/app
+    FROM=mombre_de_tu_proyecto
+    
+    DEBUG=True
+    HOST=dominio_de_tu_proyecto
+    PORT=5000
+    DATABASE_URL=sqlite:///emails.db
+    UPLOAD_FOLDER=uploads (recuerda crear esta carpeta en el directorio raíz)
     ```
 
 5. Crea las tablas de la base de datos:
@@ -80,7 +86,9 @@ mailserver/
 │       └── js/
 ├── core/
 │   ├── __init__.py
-│   └── importcsv.py
+│   ├── importcsv.py
+│   ├── mailer.py
+│   └── smtpconnect.py
 ├── uploads/
 ├── config.py
 ├── db.py
