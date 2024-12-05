@@ -18,6 +18,6 @@ class AddToListForm(FlaskForm):
 
 class CSVUploadForm(FlaskForm):
     csv_file=FileField("CSV File", validators=[DataRequired()])
-    list_name=StringField("List Name", validators=[DataRequired()])
-    existing_list=SelectField("Select Existing List", coerce=int, validators=[DataRequired()])
+    list_name=StringField("List Name")
+    existing_list=SelectField("Select Existing List", coerce=int)
     submit=SubmitField("Upload CSV")

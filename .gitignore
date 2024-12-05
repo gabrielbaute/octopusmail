@@ -2,8 +2,8 @@
 venv/
 __pycache__/
 *.py[cod]
-app/__pycache__
-core/__pycache__
+app/__pycache__/
+core/__pycache__/
 
 # Archivos de configuración
 .env

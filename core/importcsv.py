@@ -1,7 +1,7 @@
 import csv
 
 def importcsv(filepath):
-    with open(filepath, newline='', encoding='utf-8') as csvfile:
+    with open(filepath, newline='', encoding='utf-8-sig') as csvfile:
         
         reader=csv.DictReader(csvfile)
         receivers=[]

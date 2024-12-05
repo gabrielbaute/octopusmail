@@ -73,46 +73,53 @@ def add_to_list():
 
 @email_bp.route("/upload_csv", methods=["GET", "POST"])
 def upload_csv():
-    form=CSVUploadForm()
+    form = CSVUploadForm()
+    
+    # Poblar el campo de selección con listas existentes
     form.existing_list.choices=[(l.id, l.name) for l in session.query(List).all()]
 
     if form.validate_on_submit():
-        # Almacenar el archivo .csv
+	    # Almacenar el archivo .csv
         file=form.csv_file.data
         filename=secure_filename(file.filename)
         filepath=os.path.join(Config.UPLOAD_FOLDER, filename)
         file.save(filepath)
-
+        receivers=importcsv(filepath)
+        
         list_name=form.list_name.data
         existing_list_id=form.existing_list.data
 
-        # Leer el archivo .csv
-        receivers=importcsv(filepath)
-        list_name=form.list_name.data
-
+        # Crear una nueva lista si se ha proporcionado un nombre de lista nuevo
         if list_name:
             email_list=session.query(List).filter_by(name=list_name).first()
             if not email_list:
                 email_list=List(name=list_name)
                 session.add(email_list)
                 session.commit()
+	    # Usar lista existente
         else:
             email_list=session.query(List).get(existing_list_id)
 
         for receiver in receivers:
+            print(f"Processing receiver: {receiver}") # Depuración
             if "email" in receiver and "name" in receiver:
                 existing_email=session.query(Email).filter_by(email=receiver["email"]).first()
                 if not existing_email:
                     email=Email(email=receiver["email"], name=receiver["name"])
                     session.add(email)
+      		    
+	            # Asignar el correo a la lista
                     email.lists.append(email_list)
+                    print(f"Added email: {email.email}") # Depuración
                 else:
                     existing_email.lists.append(email_list)
+                    print(f"Updated existing email: {existing_email.email}") # Depuración
             else:
                 flash(f"Invalid data in row: {receiver}", "danger")
         session.commit()
         flash("CSV uploaded and emails added successfully!", "success")
         return redirect(url_for("email.upload_csv"))
+    
     return render_template("upload_csv.html", form=form)
 
 @email_bp.route("/send_email", methods=["POST"])
