@@ -3,13 +3,15 @@ from config import Config
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
+from email.utils import formataddr
 from email import encoders
 
     
 def headerCompose(receiver, subject):
     msg=MIMEMultipart()
+    from_adress=formataddr((Config.FROM_NAME, Config.EMAIL))
 
-    msg['From']=Config.FROM
+    msg['From']=from_adress
     msg['To']=receiver
     msg['Subject']=subject
 

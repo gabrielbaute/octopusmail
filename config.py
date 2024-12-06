@@ -18,5 +18,5 @@ class Config:
     SMTP_PORT=int(os.getenv("SMTP_PORT"))
     EMAIL=os.getenv("EMAIL")
     APP_PASS=os.getenv("APP_PASS")
-    FROM=os.getenv("FROM")
+    FROM_NAME=os.getenv("FROM_NAME")
 
