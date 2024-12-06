@@ -1,4 +1,4 @@
-import os
+from os.path import basename
 from config import Config
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -21,14 +21,18 @@ def bodyCompose(templatepath, receiver_name, msg):
     with open(templatepath,'r', encoding='utf-8') as file:
         html_template=file.read()
     
-    html_content=html_template.format(nombre=receiver_name)
+    html_content=html_template.format(receiver_name=receiver_name)
     msg.attach(MIMEText(html_content, 'html', 'utf-8'))
     
     return msg
 
 def bodyCompose_with_content(template_content, receiver_name, msg):
-    html_content = template_content.format(nombre=receiver_name)
-    msg.attach(MIMEText(html_content, 'html', 'utf-8'))
+    try:
+        # Reemplazar la variable {receiver_name} en el contenido de la plantilla
+        html_content=template_content.format(receiver_name=receiver_name)
+        msg.attach(MIMEText(html_content, 'html', 'utf-8'))
+    except KeyError as e:
+        raise Exception(f"Failed to format template: {e}")
     
     return msg
 
@@ -38,7 +42,7 @@ def attachMedia(filepath, msg):
         p=MIMEBase('aplication', 'octet-stream')
         p.set_payload(attachment.read())
         encoders.encode_base64(p)
-        p.add_header('Content-Disposition', f'attachment; filename={os.path.basename(filepath)}')
+        p.add_header('Content-Disposition', f'attachment; filename={basename(filepath)}')
         msg.attach(p)
 
     return msg
