@@ -1,0 +1,28 @@
+@media (prefers-color-scheme: dark) {
+    :root {
+      /* Definir variables CSS para el tema oscuro */
+      --background-color: #121212;
+      --text-color: #ffffff;
+      --primary-color: #bb86fc;
+    }
+  }
+  
+  [data-theme="dark"],
+  .theme-dark {
+    /* Definir variables CSS para el tema oscuro */
+    --background-color: #121212;
+    --text-color: #ffffff;
+    --primary-color: #bb86fc;
+  }
+  
+  /* Aplicar las variables CSS */
+  body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+  }
+  
+  .button {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+  }
+  

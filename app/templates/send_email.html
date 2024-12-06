@@ -78,23 +78,4 @@
         </div>
     </div>
 </form>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const sendModeSelect = document.getElementById('send_mode');
-    const individualFields = document.querySelectorAll('.individual-field');
-    const listField = document.querySelector('.list-field');
-
-    sendModeSelect.addEventListener('change', function() {
-        const mode = sendModeSelect.value;
-        individualFields.forEach(field => {
-            field.style.display = mode === 'individual' ? 'block' : 'none';
-        });
-        listField.style.display = mode === 'list' ? 'block' : 'none';
-    });
-
-    // Initialize visibility based on current selection
-    sendModeSelect.dispatchEvent(new Event('change'));
-});
-</script>
 {% endblock %}
