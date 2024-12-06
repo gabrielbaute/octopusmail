@@ -13,7 +13,8 @@ from flask import(
 
 from core.importcsv import importcsv
 from core.smtpconnect import(server, serverStart, serverQuit)
-from core.mailer import(headerCompose, bodyCompose, attachMedia) 
+from core.mailer import(headerCompose, bodyCompose, attachMedia)
+from core.html_templates import make_html, write_html_from_user
 
 from config import Config
 from .db import session
@@ -188,12 +189,10 @@ def upload_template():
         template_content = form.template_content.data
 
         # Crear el nombre del archivo con la extensión .html
-        filename=f"{template_name}.html"
-        filepath=os.path.join(Config.TEMPLATE_DIR, filename)
+        filepath=make_html(template_name)
 
         # Guardar el contenido HTML en el archivo
-        with open(filepath, "w", encoding="utf-8") as file:
-            file.write(template_content)
+        write_html_from_user(template_content, filepath)
         
         flash("Template uploaded successfully!", "success")
         return redirect(url_for("email.upload_template"))
