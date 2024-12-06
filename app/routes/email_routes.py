@@ -1,6 +1,7 @@
 import smtplib
 import os
 from werkzeug.utils import secure_filename
+from flask_login import login_required
 from flask import(
     Blueprint, 
     request,
@@ -23,10 +24,12 @@ from ..forms import EmailForm, ListForm, AddToListForm, CSVUploadForm
 email_bp=Blueprint("email", __name__)
 
 @email_bp.route("/")
+@login_required
 def index():
     return render_template("index.html")
 
 @email_bp.route("/add_email", methods=["GET", "POST"])
+@login_required
 def add_email():
     form=EmailForm()
     if form.validate_on_submit():
@@ -42,6 +45,7 @@ def add_email():
     return render_template("add_email.html", form=form)
 
 @email_bp.route("/create_list", methods=["GET", "POST"])
+@login_required
 def create_list():
     form=ListForm()
     if form.validate_on_submit():
@@ -57,6 +61,7 @@ def create_list():
     return render_template("create_list.html", form=form)
 
 @email_bp.route("/add_to_list", methods=["GET", "POST"])
+@login_required
 def add_to_list():
     form=AddToListForm()
     if form.validate_on_submit():
@@ -72,6 +77,7 @@ def add_to_list():
     return render_template("add_to_list.html", form=form)
 
 @email_bp.route("/upload_csv", methods=["GET", "POST"])
+@login_required
 def upload_csv():
     form = CSVUploadForm()
     
@@ -124,6 +130,7 @@ def upload_csv():
 
 # Ruta para mostrar el formulario de envío de correos electrónicos
 @email_bp.route("/send_email_form", methods=["GET"])
+@login_required
 def send_email_form():
     lists=session.query(List).all()
     templates=[filename for filename in os.listdir(Config.TEMPLATE_DIR) if filename.endswith('.html')]
@@ -132,6 +139,7 @@ def send_email_form():
 
 # Ruta para enviar correos electrónicos
 @email_bp.route("/send_email", methods=["POST"])
+@login_required
 def send_email_route():
     send_mode=request.form.get("send_mode")
     subject=request.form.get("subject")
@@ -182,6 +190,7 @@ def send_email_route():
     return redirect(url_for("email.show_emails"))
 
 @email_bp.route("/emails")
+@login_required
 def show_emails():
     emails=session.query(Email).all()
     return render_template("emails.html", emails=emails)

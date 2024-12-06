@@ -1,4 +1,5 @@
 from flask import Blueprint, redirect, url_for, render_template, flash
+from flask_login import login_required
 from ..db import session
 from ..models import SMTPProfile
 from ..forms import SMTPProfileForm
@@ -8,12 +9,14 @@ smtp_bp=Blueprint("smtp", __name__)
 
 # Ruta para mostrar todos los perfiles SMTP
 @smtp_bp.route("/smtp_profiles")
+@login_required
 def show_smtp_profiles():
     profiles = session.query(SMTPProfile).all()
     return render_template('smtp_profiles.html', profiles=profiles)
 
 # Ruta para añadir un nuevo perfil SMTP
 @smtp_bp.route("/add_smtp_profile", methods=["GET", "POST"])
+@login_required
 def add_smtp_profile():
     form=SMTPProfileForm()
     if form.validate_on_submit():
@@ -32,6 +35,7 @@ def add_smtp_profile():
 
 # Ruta para editar un perfil SMTP existente
 @smtp_bp.route("/edit_smtp_profile/<int:profile_id>", methods=["GET", "POST"])
+@login_required
 def edit_smtp_profile(profile_id):
     profile=session.query(SMTPProfile).get(profile_id)
     form=SMTPProfileForm(obj=profile)
@@ -48,6 +52,7 @@ def edit_smtp_profile(profile_id):
 
 # Ruta para eliminar un perfil SMTP existente
 @smtp_bp.route("/delete_smtp_profile/<int:profile_id>", methods=["POST"])
+@login_required
 def delete_smtp_profile(profile_id):
     profile=session.query(SMTPProfile).get(profile_id)
     session.delete(profile)

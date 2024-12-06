@@ -1,4 +1,5 @@
 from sqlalchemy import create_engine, Column, Integer, String, Table, ForeignKey
+from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
 from flask_login import UserMixin
@@ -18,15 +19,22 @@ class Role(Base):
     __tablename__="roles"
     id=Column(Integer, primary_key=True)
     name=Column(String, unique=True, nullable=False)
+    users=relationship("User", back_populates="role")
 
-class User(Base, UserMixin):
+class User(UserMixin, Base):
     __tablename__="users"
     id=Column(Integer, primary_key=True)
     username=Column(String, unique=True, nullable=False)
     email=Column(String, unique=True, nullable=False)
     password_hash=Column(String, nullable=False)
     role_id=Column(Integer, ForeignKey('roles.id'))
-    role=relationship("Role")
+    role=relationship("Role", back_populates="users")
+
+    def set_password(self, password):
+        self.password_hash=generate_password_hash(password)
+    
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
 
 class Email(Base):
     __tablename__="emails"

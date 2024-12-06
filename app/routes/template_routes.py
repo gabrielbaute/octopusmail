@@ -1,5 +1,6 @@
 import os
 from flask import Blueprint, render_template, request, redirect, url_for, flash, send_from_directory
+from flask_login import login_required
 from ..forms import TemplateUploadForm
 from core.html_templates import make_html, write_html_from_user
 from config import Config
@@ -9,6 +10,7 @@ templates_bp=Blueprint("templates", __name__)
 
 # Ruta para mostrar el formulario de subida de plantillas HTML
 @templates_bp.route("/upload_template", methods=["GET", "POST"])
+@login_required
 def upload_template():
     form=TemplateUploadForm()
     if form.validate_on_submit():
@@ -28,6 +30,7 @@ def upload_template():
 
 # Ruta para mostrar todas las plantillas
 @templates_bp.route("/templates")
+@login_required
 def show_templates():
     templates=[]
     for filename in os.listdir(Config.TEMPLATE_DIR):
@@ -37,11 +40,13 @@ def show_templates():
 
 # Ruta para acceder al contenido de una plantilla
 @templates_bp.route("/templates/<filename>")
+@login_required
 def get_template(filename):
     return send_from_directory(Config.TEMPLATE_DIR, filename)
 
 # Ruta para editar el contenido de una plantilla
 @templates_bp.route("/edit_template/<filename>", methods=["GET", "POST"])
+@login_required
 def edit_template(filename):
     filepath=os.path.join(Config.TEMPLATE_DIR, filename)
     form=TemplateUploadForm()

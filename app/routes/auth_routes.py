@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, flash
 from flask_login import login_user, logout_user, login_required, current_user
+from werkzeug.security import generate_password_hash
 from ..forms import LoginForm, RegistrationForm
 from ..models import User, Role
 from ..db import session
@@ -9,11 +10,17 @@ auth_bp = Blueprint('auth', __name__)
 @auth_bp.route('/register', methods=['GET', 'POST'])
 def register():
     form=RegistrationForm()
-    form.role.choices=[(role.id, role.name) for role in session.query(Role).all()]
     if form.validate_on_submit():
+        # Asignar el rol "User" por defecto
+        user_role=session.query(Role).filter_by(name="User").first()
+        if not user_role:
+            flash("No se encontró el rol de usuario por defecto")
+            return redirect(url_for("auth.register"))
+        
         user=User(
             username=form.username.data,
             email=form.email.data,
+            password_hash=generate_password_hash(form.password.data),
             role_id=form.role.data
         )
         user.set_password(form.password.data)
@@ -26,7 +33,7 @@ def register():
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('index'))
+        return redirect(url_for('email.index'))
     form=LoginForm()
     if form.validate_on_submit():
         user=session.query(User).filter_by(username=form.username.data).first()

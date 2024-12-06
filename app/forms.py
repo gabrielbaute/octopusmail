@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, FileField, SelectField, TextAreaField, IntegerField, PasswordField
-from wtforms.validators import DataRequired, Email
+from wtforms.validators import DataRequired, Email, EqualTo
 
 class EmailForm(FlaskForm):
     email=StringField("Email", validators=[DataRequired(), Email()])
@@ -59,5 +59,5 @@ class RegistrationForm(FlaskForm):
     username=StringField("Username", validators=[DataRequired()])
     email=StringField("Email", validators=[DataRequired(), Email()])
     password=PasswordField("Password", validators=[DataRequired()])
-    role=SelectField("Role", choices=[])
-    submit=SubmitField("Submit")
+    password2=PasswordField('Repeat Password', validators=[DataRequired(), EqualTo('password')])
+    submit=SubmitField("Register")
