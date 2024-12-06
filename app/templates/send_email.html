@@ -57,7 +57,13 @@
     <div class="field">
         <label class="label">Template Path</label>
         <div class="control">
-            <input class="input" type="text" name="template_path" required>
+            <div class="select">
+                <select name="template_path" id="template_path">
+                    {% for template in templates %}
+                    <option value="{{ template }}">{{ template }}</option>
+                    {% endfor %}
+                </select>
+            </div>
         </div>
     </div>
     <div class="field">

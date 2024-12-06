@@ -127,8 +127,9 @@ def upload_csv():
 # Ruta para mostrar el formulario de envío de correos electrónicos
 @email_bp.route("/send_email_form", methods=["GET"])
 def send_email_form():
-    lists = session.query(List).all()
-    return render_template("send_email.html", lists=lists)
+    lists=session.query(List).all()
+    templates=[filename for filename in os.listdir(Config.TEMPLATE_DIR) if filename.endswith('.html')]
+    return render_template("send_email.html", lists=lists, templates=templates)
 
 
 # Ruta para enviar correos electrónicos
