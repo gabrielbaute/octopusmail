@@ -26,5 +26,17 @@ class List(Base):
     name=Column(String, unique=True, nullable=False)
     emails=relationship("Email", secondary=email_list_asociation, back_populates="lists")
 
+class SMTPProfile(Base):
+    __tablename__="smtp_profiles"
+    id=Column(Integer, primary_key=True)
+    service=Column(String, nullable=False) # Servicio SMTP: Google, Outlook, Yahoo
+    port=Column(Integer, nullable=False)
+    email=Column(String, nullable=False)
+    app_pass=Column(String, nullable=False) # Contraseña o app pass)
+    from_name=Column(String, nullable=False)
+
+    def __repr__(self):
+        return f"<SMTPProfile(service={self.service}, email={self.email})>"
+
 # Creación de la Base de Datos
 Base.metadata.create_all(engine)

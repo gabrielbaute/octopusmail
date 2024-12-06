@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}SMTP Profiles{% endblock %}
+
+{% block content %}
+<h1 class="title">SMTP Profiles</h1>
+<a href="{{ url_for('email.add_smtp_profile') }}" class="button is-primary">Add SMTP Profile</a>
+<table class="table is-striped is-fullwidth">
+    <thead>
+        <tr>
+            <th>Service</th>
+            <th>Port</th>
+            <th>Email</th>
+            <th>From Name</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for profile in profiles %}
+        <tr>
+            <td>{{ profile.service }}</td>
+            <td>{{ profile.port }}</td>
+            <td>{{ profile.email }}</td>
+            <td>{{ profile.from_name }}</td>
+            <td>
+                <a href="{{ url_for('email.edit_smtp_profile', profile_id=profile.id) }}" class="button is-warning">Edit</a>
+                <form action="{{ url_for('email.delete_smtp_profile', profile_id=profile.id) }}" method="post" style="display:inline;">
+                    <button type="submit" class="button is-danger">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

@@ -19,8 +19,8 @@ from core.html_templates import make_html, write_html_from_user, read_html_templ
 
 from config import Config
 from .db import session
-from .models import Email, List
-from .forms import EmailForm, ListForm, AddToListForm, CSVUploadForm, TemplateUploadForm
+from .models import Email, List, SMTPProfile
+from .forms import EmailForm, ListForm, AddToListForm, CSVUploadForm, TemplateUploadForm, SMTPProfileForm
 
 email_bp=Blueprint("email", __name__)
 
@@ -238,3 +238,52 @@ def edit_template(filename):
         form.template_content.data=file.read()
 
     return render_template("edit_template.html", form=form, filename=filename)
+
+# Ruta para mostrar todos los perfiles SMTP
+@email_bp.route("/smtp_profiles")
+def show_smtp_profiles():
+    profiles = session.query(SMTPProfile).all()
+    return render_template('smtp_profiles.html', profiles=profiles)
+
+# Ruta para añadir un nuevo perfil SMTP
+@email_bp.route("/add_smtp_profile", methods=["GET", "POST"])
+def add_smtp_profile():
+    form=SMTPProfileForm()
+    if form.validate_on_submit():
+        profile=SMTPProfile(
+            service=form.service.data,
+            port=form.port.data,
+            email=form.email.data,
+            app_pass=form.app_pass.data,
+            from_name=form.from_name.data
+        )
+        session.add(profile)
+        session.commit()
+        flash("SMTP Profile added successfully!", "success")
+        return redirect(url_for("email.show_smtp_profiles"))
+    return render_template("add_smtp_profile.html", form=form)
+
+# Ruta para editar un perfil SMTP existente
+@email_bp.route("/edit_smtp_profile/<int:profile_id>", methods=["GET", "POST"])
+def edit_smtp_profile(profile_id):
+    profile=session.query(SMTPProfile).get(profile_id)
+    form=SMTPProfileForm(obj=profile)
+    if form.validate_on_submit():
+        profile.service=form.service.data
+        profile.port=form.port.data
+        profile.email=form.email.data
+        profile.app_pass=form.app_pass.data
+        profile.from_name=form.from_name.data
+        session.commit()
+        flash("SMTP Profile updated successfully!", "success")
+        return redirect(url_for("email.show_smtp_profiles"))
+    return render_template("edit_smtp_profile.html", form=form)
+
+# Ruta para eliminar un perfil SMTP existente
+@email_bp.route("/delete_smtp_profile/<int:profile_id>", methods=["POST"])
+def delete_smtp_profile(profile_id):
+    profile=session.query(SMTPProfile).get(profile_id)
+    session.delete(profile)
+    session.commit()
+    flash("SMTP Profile deleted successfully!", "success")
+    return redirect(url_for("email.show_smtp_profiles"))

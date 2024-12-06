@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, FileField, SelectField, TextAreaField
+from wtforms import StringField, SubmitField, FileField, SelectField, TextAreaField, IntegerField
 from wtforms.validators import DataRequired, Email
 
 class EmailForm(FlaskForm):
@@ -26,3 +26,26 @@ class TemplateUploadForm(FlaskForm):
     template_name=StringField("Template Name", validators=[DataRequired()])
     template_content=TextAreaField("Template Content (HTML)", validators=[DataRequired()])
     submit=SubmitField("Upload Template")
+
+class SMTPProfileForm(FlaskForm):
+    service=SelectField(
+        "SMTP Service",
+        choices=[
+            ("Google", "Google"),
+            ("Outlook", "Outlook"),
+            ("Yahoo", "Yahoo")],
+        validators=[DataRequired()]
+        )
+    port = SelectField(
+        "Port", 
+        choices=[
+            ("25", "25"), 
+            ("465", "465"), 
+            ("587", "587")
+            ], 
+        validators=[DataRequired()]
+        )
+    email=StringField("Email", validators=[DataRequired(), Email()])
+    app_pass=StringField("App or mail pass", validators=[DataRequired()])
+    from_name=StringField("From Name", validators=[DataRequired()])
+    submit=SubmitField("Save")
