@@ -19,21 +19,20 @@ def headerCompose(receiver, subject):
 
 def bodyCompose(templatepath, receiver_name, msg):
     with open(templatepath,'r', encoding='utf-8') as file:
-        html_template = file.read()
+        html_template=file.read()
     
-    html_content = html_template.format(nombre=receiver_name)
+    html_content=html_template.format(nombre=receiver_name)
     msg.attach(MIMEText(html_content, 'html', 'utf-8'))
     
     return msg
 
 
 def attachMedia(filepath, msg):
-    attachment=open(filepath, 'rb')
-    p=MIMEBase('aplication', 'octet-stream')
-    
-    p.set_payload(attachment.read())
-    encoders.encode_base64(p)
-    p.add_header('Content-Disposition', f'attachment; filename={filepath}')
-    msg.attach(p)
+    with open(filepath, 'rb') as attachment:
+        p=MIMEBase('aplication', 'octet-stream')
+        p.set_payload(attachment.read())
+        encoders.encode_base64(p)
+        p.add_header('Content-Disposition', f'attachment; filename={os.path.basename(filepath)}')
+        msg.attach(p)
 
     return msg

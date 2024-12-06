@@ -1,23 +1,16 @@
 import smtplib, os
-from dotenv import load_dotenv
+from config import Config
 
-load_dotenv()
-smtpserver=os.getenv("SMTP_SERVER")
-smtpport=os.getenv("SMTP_PORT")
-smtpmail=os.getenv("EMAIL")
-password=os.getenv("APP_PASS")
-
-
-server=smtplib.SMTP(smtpserver, smtpport)
+server=smtplib.SMTP(Config.SMTP_SERVER, Config.SMTP_PORT)
 
 def serverStart(server):
     try:
         server.ehlo()
         server.starttls()
-        server.login(smtpmail, password)
-        print('Inicio de sesión en SMTP exitoso')
+        server.login(Config.EMAIL, Config.APP_PASS)
+        print("Inicio de sesión en SMTP exitoso")
     except smtplib.SMTPException as e:
-        print(f'Error: No se pudo conectar: {e}')
+        print(f"Error: No se pudo conectar: {e}")
         server.quit()
 
 def serverQuiet(server):
