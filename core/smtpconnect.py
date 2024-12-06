@@ -13,5 +13,5 @@ def serverStart(server):
         print(f"Error: No se pudo conectar: {e}")
         server.quit()
 
-def serverQuiet(server):
+def serverQuit(server):
     server.quit()

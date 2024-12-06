@@ -12,7 +12,7 @@ from flask import(
     )
 
 from core.importcsv import importcsv
-from core.smtpconnect import serverStart, serverQuiet
+from core.smtpconnect import(server, serverStart, serverQuit)
 from core.mailer import(headerCompose, bodyCompose, attachMedia) 
 
 from config import Config
@@ -122,25 +122,55 @@ def upload_csv():
     
     return render_template("upload_csv.html", form=form)
 
+# Ruta para mostrar el formulario de envío de correos electrónicos
+@email_bp.route("/send_email_form", methods=["GET"])
+def send_email_form():
+    lists = session.query(List).all()
+    return render_template("send_email.html", lists=lists)
+
+
+# Ruta para enviar correos electrónicos
 @email_bp.route("/send_email", methods=["POST"])
-def send_email():
-    data=request.json
-    receivers=importcsv(data["csv_path"])
+def send_email_route():
+    send_mode=request.form.get("send_mode")
+    subject=request.form.get("subject")
+    template_path=request.form.get("template_path")
+    receiver_name=request.form.get("receiver_name")
+    attachment_path=request.form.get("attachment_path")
 
-    server=smtplib.SMTP(Config.SMTP_SERVER, Config.SMTP_PORT)
-    serverStart(server)
-
-    for receiver in receivers:
-        msg=headerCompose(receiver["email"], data["subject"])
-        msg=bodyCompose(data["template_path"], receiver["name"], msg)
-        if "attachment_path" in data:
-            msg=attachMedia(data["attachment_path"], msg)
-        
-        server.sendmail(Config.FROM, receiver["email"], msg.as_string())
+    if send_mode == "individual":
+        receiver=request.form.get("receiver")
+        msg=headerCompose(receiver, subject)
+        msg=bodyCompose(template_path, receiver_name, msg)
+        if attachment_path:
+            msg=attachMedia(attachment_path, msg)
+        serverStart(server)
+        server.sendmail(msg['From'], msg['To'], msg.as_string())
+        serverQuit(server)
+    elif send_mode == "list":
+        list_id=request.form.get("list_id")
+        email_list=session.query(List).get(list_id)
+        serverStart(server)
+        for email in email_list.emails:
+            msg=headerCompose(email.email, subject)
+            msg=bodyCompose(template_path, email.name, msg)
+            if attachment_path:
+                msg=attachMedia(attachment_path, msg)
+            server.sendmail(msg['From'], msg['To'], msg.as_string())
+        serverQuit(server)
+    elif send_mode == "all":
+        all_emails=session.query(Email).all()
+        serverStart(server)
+        for email in all_emails:
+            msg=headerCompose(email.email, subject)
+            msg=bodyCompose(template_path, email.name, msg)
+            if attachment_path:
+                msg=attachMedia(attachment_path, msg)
+            server.sendmail(msg['From'], msg['To'], msg.as_string())
+        serverQuit(server)
     
-    serverQuiet(server)
-
-    return jsonify({"status": "success"}), 200
+    flash("Email sent successfully!", "success")
+    return redirect(url_for("email.show_emails"))
 
 @email_bp.route("/emails")
 def show_emails():
