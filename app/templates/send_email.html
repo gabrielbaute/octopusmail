@@ -4,7 +4,7 @@
 
 {% block content %}
 <h1 class="title">Send Email</h1>
-<form method="POST" action="{{ url_for('email.send_email_form') }}" enctype="multipart/form-data">
+<form method="POST" action="{{ url_for('email.send_email_route') }}" enctype="multipart/form-data">
     <div class="field">
         <label class="label">Select Mode</label>
         <div class="control">

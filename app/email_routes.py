@@ -13,9 +13,9 @@ from flask import(
     )
 
 from core.importcsv import importcsv
-from core.smtpconnect import(server, serverStart, serverQuit)
-from core.mailer import(headerCompose, bodyCompose, attachMedia)
-from core.html_templates import make_html, write_html_from_user
+from core.smtpconnect import(serverStart, serverQuit)
+from core.mailer import(headerCompose, bodyCompose, bodyCompose_with_content, attachMedia)
+from core.html_templates import make_html, write_html_from_user, read_html_template
 
 from config import Config
 from .db import session
@@ -137,44 +137,50 @@ def send_email_form():
 def send_email_route():
     send_mode=request.form.get("send_mode")
     subject=request.form.get("subject")
-    template_path=request.form.get("template_path")
-    receiver_name=request.form.get("receiver_name")
+    template_filename=request.form.get("template_path")
     attachment_path=request.form.get("attachment_path")
 
-    if send_mode == "individual":
-        receiver=request.form.get("receiver")
-        msg=headerCompose(receiver, subject)
-        msg=bodyCompose(template_path, receiver_name, msg)
-        if attachment_path:
-            msg=attachMedia(attachment_path, msg)
-        serverStart(server)
-        server.sendmail(msg['From'], msg['To'], msg.as_string())
-        serverQuit(server)
-    
-    elif send_mode == "list":
-        list_id=request.form.get("list_id")
-        email_list=session.query(List).get(list_id)
-        serverStart(server)
-        for email in email_list.emails:
-            msg=headerCompose(email.email, subject)
-            msg=bodyCompose(template_path, email.name, msg)
+    template_path = os.path.join(Config.TEMPLATE_DIR, template_filename)
+    template_content = read_html_template(template_path)
+
+    server_instance = serverStart()
+    if not server_instance:
+        flash("Failed to connect to SMTP server", "danger")
+        return redirect(url_for("email.send_email_form"))
+
+    try:
+        if send_mode == "individual":
+            receiver=request.form.get("receiver")
+            receiver_name=request.form.get("receiver_name")
+            msg=headerCompose(receiver, subject)
+            msg=bodyCompose_with_content(template_content, receiver_name, msg)
             if attachment_path:
                 msg=attachMedia(attachment_path, msg)
-            server.sendmail(msg['From'], msg['To'], msg.as_string())
-        serverQuit(server)
-    
-    elif send_mode == "all":
-        all_emails=session.query(Email).all()
-        serverStart(server)
-        for email in all_emails:
-            msg=headerCompose(email.email, subject)
-            msg=bodyCompose(template_path, email.name, msg)
-            if attachment_path:
-                msg=attachMedia(attachment_path, msg)
-            server.sendmail(msg['From'], msg['To'], msg.as_string())
-        serverQuit(server)
-    
-    flash("Email sent successfully!", "success")
+            server_instance.sendmail(msg['From'], msg['To'], msg.as_string())
+        
+        elif send_mode == "list":
+            list_id=request.form.get("list_id")
+            email_list=session.query(List).get(list_id)
+            for email in email_list.emails:
+                msg=headerCompose(email.email, subject)
+                msg=bodyCompose_with_content(template_content, email.name, msg)
+                if attachment_path:
+                    msg=attachMedia(attachment_path, msg)
+                server_instance.sendmail(msg['From'], msg['To'], msg.as_string())
+        
+        elif send_mode == "all":
+            all_emails=session.query(Email).all()
+            for email in all_emails:
+                msg=headerCompose(email.email, subject)
+                msg=bodyCompose_with_content(template_content, email.name, msg)
+                if attachment_path:
+                    msg=attachMedia(attachment_path, msg)
+                server_instance.sendmail(msg['From'], msg['To'], msg.as_string())
+        flash("Email sent successfully!", "success")
+    except Exception as e:
+        flash(f"Failed to send email: {e}", "danger")
+    finally:
+        serverQuit(server_instance)
     return redirect(url_for("email.show_emails"))
 
 @email_bp.route("/emails")

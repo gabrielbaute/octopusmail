@@ -12,3 +12,7 @@ def write_html_from_user(template_content, filepath):
         file.write(template_content)
     
     return file
+
+def read_html_template(filepath):
+    with open(filepath, "r", encoding="utf-8") as file:
+        return file.read()

@@ -1,17 +1,15 @@
 import os
-from dotenv import load_dotenv
+from config import Config
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
 from email import encoders
 
-load_dotenv()
-mailfrom=os.getenv("FROM")
     
 def headerCompose(receiver, subject):
     msg=MIMEMultipart()
 
-    msg['From']=mailfrom
+    msg['From']=Config.FROM
     msg['To']=receiver
     msg['Subject']=subject
 
@@ -22,6 +20,12 @@ def bodyCompose(templatepath, receiver_name, msg):
         html_template=file.read()
     
     html_content=html_template.format(nombre=receiver_name)
+    msg.attach(MIMEText(html_content, 'html', 'utf-8'))
+    
+    return msg
+
+def bodyCompose_with_content(template_content, receiver_name, msg):
+    html_content = template_content.format(nombre=receiver_name)
     msg.attach(MIMEText(html_content, 'html', 'utf-8'))
     
     return msg
