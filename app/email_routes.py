@@ -8,7 +8,8 @@ from flask import(
     render_template, 
     redirect, 
     url_for, 
-    flash
+    flash,
+    send_from_directory
     )
 
 from core.importcsv import importcsv
@@ -198,3 +199,35 @@ def upload_template():
         return redirect(url_for("email.upload_template"))
     
     return render_template("upload_template.html", form=form)
+
+# Ruta para mostrar todas las plantillas
+@email_bp.route("/templates")
+def show_templates():
+    templates=[]
+    for filename in os.listdir(Config.TEMPLATE_DIR):
+        if filename.endswith(".html"):
+            templates.append(filename)
+    return render_template('templates.html', templates=templates)
+
+# Ruta para acceder al contenido de una plantilla
+@email_bp.route("/templates/<filename>")
+def get_template(filename):
+    return send_from_directory(Config.TEMPLATE_DIR, filename)
+
+# Ruta para editar el contenido de una plantilla
+@email_bp.route("/edit_template/<filename>", methods=["GET", "POST"])
+def edit_template(filename):
+    filepath=os.path.join(Config.TEMPLATE_DIR, filename)
+    form=TemplateUploadForm()
+
+    if request.method == "POST" and form.validate_on_submit():
+        template_content=form.template_content.data
+        write_html_from_user(template_content, filepath)
+        flash("Template updated successfully!", "success")
+        return redirect(url_for("email.show_templates"))
+
+    with open(filepath, 'r', encoding='utf-8') as file:
+        form.template_name.data=filename.replace('.html', '')
+        form.template_content.data=file.read()
+
+    return render_template("edit_template.html", form=form, filename=filename)

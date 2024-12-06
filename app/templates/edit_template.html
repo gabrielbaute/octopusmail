@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Template{% endblock %}
+
+{% block content %}
+<h1 class="title">Edit Template: {{ filename }}</h1>
+<form method="POST" action="{{ url_for('email.edit_template', filename=filename) }}">
+    {{ form.hidden_tag() }}
+    <div class="field">
+        <label class="label">{{ form.template_name.label }}</label>
+        <div class="control">
+            {{ form.template_name(class_="input", readonly=True) }}
+        </div>
+    </div>
+    <div class="field">
+        <label class="label">{{ form.template_content.label }}</label>
+        <div class="control">
+            {{ form.template_content(class_="textarea") }}
+        </div>
+    </div>
+    <div class="field">
+        <div class="control">
+            {{ form.submit(class_="button is-primary") }}
+        </div>
+    </div>
+</form>
+{% endblock %}
