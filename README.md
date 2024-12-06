@@ -1,6 +1,5 @@
-# MailServer Application
+# OctopusMail
 
-## Descripción
 Esta es una aplicación de envío de correos utilizando Flask, SQLAlchemy y Bulma. La aplicación permite gestionar correos electrónicos y listas de correos, cargar contactos desde archivos CSV, y enviar correos electrónicos a listas específicas.
 
 ## Características
@@ -38,63 +37,67 @@ Esta es una aplicación de envío de correos utilizando Flask, SQLAlchemy y Bulm
     ```
 
 4. Configura las variables de entorno:
-    Crea un archivo `.env` en el directorio raíz del proyecto y añade las siguientes variables:
-    ```ini
-    SECRET_KEY=tu_clave_secreta
-    DATABASE_URL=sqlite:///emails.db
-    SMTP_SERVER=tu_smtp_server
-    SMTP_PORT=tu_smtp_port
-    EMAIL=tu_email
-    APP_PASS=tu_contraseña_de_correo/app
-    FROM=mombre_de_tu_proyecto
-    
+
+    #### Flask Settings
+
+    | Variable        | Valor por Defecto                     | Descripción                                                                 |
+    |-----------------|---------------------------------------|-----------------------------------------------------------------------------|
+    | `SECRET_KEY`    | `mysecretkey`                         | Clave secreta utilizada por Flask para mantener la seguridad de la sesión.  |
+    | `DATABASE_URL`  | `sqlite:///emails.db`             | URL de la base de datos. Ejemplo: `sqlite:///mydatabase.db` o `postgresql://user:password@localhost/mydatabase` |
+    | `DEBUG`         | `False`                               | Modo de depuración. Opciones: `True`, `False`.                              |
+    | `HOST`          | `0.0.0.0`                             | Dirección de host en la que se ejecuta la aplicación.                       |
+    | `PORT`          | `5000`                                | Puerto en el que se ejecuta la aplicación.                                  |
+    | `UPLOAD_FOLDER` | `None`                                | Ruta del directorio de subida de archivos.                                  |
+    | `TEMPLATE_DIR`  | `os.path.join(os.getcwd(), 'core', 'templates')` | Directorio de plantillas de la aplicación.                                   |
+
+    #### SMTP Settings
+
+    | Variable        | Valor por Defecto | Descripción                                                                 |
+    |-----------------|-------------------|-----------------------------------------------------------------------------|
+    | `SMTP_SERVER`   | `None`            | Dirección del servidor SMTP. Ejemplo: `smtp.gmail.com`.                      |
+    | `SMTP_PORT`     | `None`            | Puerto del servidor SMTP. Ejemplo: `587` para TLS, `465` para SSL.          |
+    | `EMAIL`         | `None`            | Correo electrónico utilizado para enviar correos.                           |
+    | `APP_PASS`      | `None`            | Contraseña de la aplicación o token para el correo electrónico.             |
+    | `FROM`          | `None`            | Dirección de correo desde la cual se enviarán los correos.                   |
+    | `FROM_NAME`     | `None`            | Nombre del remitente de los correos.                                         |
+
+    ### Ejemplo de Configuración del Archivo `.env`
+
+    Asegúrate de crear un archivo `.env` con las variables necesarias. Aquí hay un ejemplo:
+
+    ```env
+    SECRET_KEY=mysecretkey
+    DATABASE_URL=sqlite:///mydatabase.db
     DEBUG=True
-    HOST=dominio_de_tu_proyecto
+    HOST=0.0.0.0
     PORT=5000
-    DATABASE_URL=sqlite:///emails.db
-    UPLOAD_FOLDER=uploads (recuerda crear esta carpeta en el directorio raíz)
+    UPLOAD_FOLDER=./uploads
+    SMTP_SERVER=smtp.gmail.com
+    SMTP_PORT=587
+    EMAIL=tu_correo@gmail.com
+    APP_PASS=tu_app_pass
+    FROM=tu_correo@gmail.com
+    FROM_NAME=Tu Nombre
     ```
 
-5. Crea las tablas de la base de datos:
-    ```bash
-    flask shell
-    >>> from app import initialize_db
-    >>> initialize_db()
-    >>> exit()
-    ```
-
-6. Ejecuta la aplicación:
+5. Ejecuta la aplicación:
     ```bash
     flask run
     ```
+### Credenciales del Admin por Defecto
+
+El sistema inicializa un usuario administrador con las siguientes credenciales por defecto:
+
+- **Nombre de usuario**: `admin`
+- **Correo electrónico**: `admin@example.com`
+- **Contraseña**: `adminpassword`
+
+Por favor, cambia estas credenciales después del primer inicio de sesión para mantener la seguridad del sistema.
 
 ## Uso
-- Navega a `http://127.0.0.1:5000/` en tu navegador.
+- Navega a `http://127.0.0.1:5000/` (o el puerto que hayas especificado) en tu navegador.
 - Utiliza la interfaz para añadir correos, crear listas, y cargar contactos desde archivos CSV.
 
-## Estructura del Proyecto
-```
-mailserver/
-├── app/
-│   ├── __init__.py
-│   ├── email_routes.py
-│   ├── forms.py
-│   ├── models.py
-│   ├── templates/
-│   ├── static/
-│       ├── css/
-│       └── js/
-├── core/
-│   ├── __init__.py
-│   ├── importcsv.py
-│   ├── mailer.py
-│   └── smtpconnect.py
-├── uploads/
-├── config.py
-├── db.py
-├── run.py
-└── .env
-```
 
 ## Contribuir
 1. Haz un fork del proyecto.
