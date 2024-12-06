@@ -11,6 +11,7 @@ class Config:
     DATABASE_URL=os.getenv("DATABASE_URL")
     SECRET_KEY=os.getenv("SECRET_KEY")
     UPLOAD_FOLDER=os.getenv("UPLOAD_FOLDER")
+    TEMPLATE_DIR=os.path.join(os.getcwd(), 'core', 'templates')
 
     # SMTP settings
     SMTP_SERVER=os.getenv("SMTP_SERVER")

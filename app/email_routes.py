@@ -18,7 +18,7 @@ from core.mailer import(headerCompose, bodyCompose, attachMedia)
 from config import Config
 from .db import session
 from .models import Email, List
-from .forms import EmailForm, ListForm, AddToListForm, CSVUploadForm
+from .forms import EmailForm, ListForm, AddToListForm, CSVUploadForm, TemplateUploadForm
 
 email_bp=Blueprint("email", __name__)
 
@@ -147,6 +147,7 @@ def send_email_route():
         serverStart(server)
         server.sendmail(msg['From'], msg['To'], msg.as_string())
         serverQuit(server)
+    
     elif send_mode == "list":
         list_id=request.form.get("list_id")
         email_list=session.query(List).get(list_id)
@@ -158,6 +159,7 @@ def send_email_route():
                 msg=attachMedia(attachment_path, msg)
             server.sendmail(msg['From'], msg['To'], msg.as_string())
         serverQuit(server)
+    
     elif send_mode == "all":
         all_emails=session.query(Email).all()
         serverStart(server)
@@ -176,3 +178,24 @@ def send_email_route():
 def show_emails():
     emails=session.query(Email).all()
     return render_template("emails.html", emails=emails)
+
+# Ruta para mostrar el formulario de subida de plantillas HTML
+@email_bp.route("/upload_template", methods=["GET", "POST"])
+def upload_template():
+    form=TemplateUploadForm()
+    if form.validate_on_submit():
+        template_name=form.template_name.data
+        template_content = form.template_content.data
+
+        # Crear el nombre del archivo con la extensión .html
+        filename=f"{template_name}.html"
+        filepath=os.path.join(Config.TEMPLATE_DIR, filename)
+
+        # Guardar el contenido HTML en el archivo
+        with open(filepath, "w", encoding="utf-8") as file:
+            file.write(template_content)
+        
+        flash("Template uploaded successfully!", "success")
+        return redirect(url_for("email.upload_template"))
+    
+    return render_template("upload_template.html", form=form)
