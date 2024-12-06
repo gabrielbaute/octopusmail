@@ -45,6 +45,20 @@ def save_smtp_config_to_db():
     from app.models import SMTPProfile
     from app.db import session
     
+    # Verificar si ya existe un perfil con la misma configuración
+    existing_profile = session.query(SMTPProfile).filter_by(
+        service='Google' if Config.SMTP_SERVER == 'smtp.gmail.com' else 'Outlook' if Config.SMTP_SERVER == 'smtp-mail.outlook.com' else 'Yahoo' if Config.SMTP_SERVER == 'smtp.mail.yahoo.com' else '',
+        port=Config.SMTP_PORT,
+        email=Config.EMAIL,
+        app_pass=Config.APP_PASS,
+        from_name=Config.FROM_NAME
+    ).first()
+    
+    if existing_profile:
+        print("SMTP profile already exists in the database.")
+        return
+
+    # Si no existe, guardar el nuevo perfil
     profile = SMTPProfile(
         service='Google' if Config.SMTP_SERVER == 'smtp.gmail.com' else 'Outlook' if Config.SMTP_SERVER == 'smtp-mail.outlook.com' else 'Yahoo' if Config.SMTP_SERVER == 'smtp.mail.yahoo.com' else '',
         port=Config.SMTP_PORT,
@@ -55,6 +69,7 @@ def save_smtp_config_to_db():
     session.add(profile)
     try:
         session.commit()
+        print("SMTP profile saved to the database.")
     except Exception as e:
         session.rollback()
         print(f"Error saving SMTP profile to database: {e}")
