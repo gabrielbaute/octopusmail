@@ -4,7 +4,7 @@
 
 {% block content %}
 <h1 class="title">Upload Template</h1>
-<form method="POST" action="{{ url_for('email.upload_template') }}">
+<form method="POST" action="{{ url_for('templates.upload_template') }}">
     {{ form.hidden_tag() }}
     <div class="field">
         <label class="label">{{ form.template_name.label }}</label>

@@ -1,6 +1,7 @@
 from sqlalchemy import create_engine, Column, Integer, String, Table, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
+from flask_login import UserMixin
 from .db import engine
 
 Base=declarative_base()
@@ -12,6 +13,20 @@ email_list_asociation=Table(
     Column("email_id", Integer, ForeignKey("emails.id")),
     Column("list_id", Integer, ForeignKey("lists.id"))
     )
+
+class Role(Base):
+    __tablename__="roles"
+    id=Column(Integer, primary_key=True)
+    name=Column(String, unique=True, nullable=False)
+
+class User(Base, UserMixin):
+    __tablename__="users"
+    id=Column(Integer, primary_key=True)
+    username=Column(String, unique=True, nullable=False)
+    email=Column(String, unique=True, nullable=False)
+    password_hash=Column(String, nullable=False)
+    role_id=Column(Integer, ForeignKey('roles.id'))
+    role=relationship("Role")
 
 class Email(Base):
     __tablename__="emails"

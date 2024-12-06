@@ -4,7 +4,7 @@
 
 {% block content %}
 <h1 class="title">Edit Template: {{ filename }}</h1>
-<form method="POST" action="{{ url_for('email.edit_template', filename=filename) }}">
+<form method="POST" action="{{ url_for('templates.edit_template', filename=filename) }}">
     {{ form.hidden_tag() }}
     <div class="field">
         <label class="label">{{ form.template_name.label }}</label>

@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, FileField, SelectField, TextAreaField, IntegerField
+from wtforms import StringField, SubmitField, FileField, SelectField, TextAreaField, IntegerField, PasswordField
 from wtforms.validators import DataRequired, Email
 
 class EmailForm(FlaskForm):
@@ -49,3 +49,15 @@ class SMTPProfileForm(FlaskForm):
     app_pass=StringField("App or mail pass", validators=[DataRequired()])
     from_name=StringField("From Name", validators=[DataRequired()])
     submit=SubmitField("Save")
+
+class LoginForm(FlaskForm):
+    username=StringField("Username", validators=[DataRequired()])
+    password=PasswordField("Password", validators=[DataRequired()])
+    submit=SubmitField("Log In")
+
+class RegistrationForm(FlaskForm):
+    username=StringField("Username", validators=[DataRequired()])
+    email=StringField("Email", validators=[DataRequired(), Email()])
+    password=PasswordField("Password", validators=[DataRequired()])
+    role=SelectField("Role", choices=[])
+    submit=SubmitField("Submit")

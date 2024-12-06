@@ -4,7 +4,7 @@
 
 {% block content %}
 <h1 class="title">SMTP Profiles</h1>
-<a href="{{ url_for('email.add_smtp_profile') }}" class="button is-primary">Add SMTP Profile</a>
+<a href="{{ url_for('smtp.add_smtp_profile') }}" class="button is-primary">Add SMTP Profile</a>
 <table class="table is-striped is-fullwidth">
     <thead>
         <tr>
@@ -23,8 +23,8 @@
             <td>{{ profile.email }}</td>
             <td>{{ profile.from_name }}</td>
             <td>
-                <a href="{{ url_for('email.edit_smtp_profile', profile_id=profile.id) }}" class="button is-warning">Edit</a>
-                <form action="{{ url_for('email.delete_smtp_profile', profile_id=profile.id) }}" method="post" style="display:inline;">
+                <a href="{{ url_for('smtp.edit_smtp_profile', profile_id=profile.id) }}" class="button is-warning">Edit</a>
+                <form action="{{ url_for('smtp.delete_smtp_profile', profile_id=profile.id) }}" method="post" style="display:inline;">
                     <button type="submit" class="button is-danger">Delete</button>
                 </form>
             </td>

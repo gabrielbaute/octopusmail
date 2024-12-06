@@ -3,24 +3,22 @@ import os
 from werkzeug.utils import secure_filename
 from flask import(
     Blueprint, 
-    request, 
-    jsonify, 
+    request,
     render_template, 
     redirect, 
     url_for, 
-    flash,
-    send_from_directory
+    flash
     )
 
 from core.importcsv import importcsv
 from core.smtpconnect import(serverStart, serverQuit)
-from core.mailer import(headerCompose, bodyCompose, bodyCompose_with_content, attachMedia)
-from core.html_templates import make_html, write_html_from_user, read_html_template
+from core.mailer import(headerCompose, bodyCompose_with_content, attachMedia)
+from core.html_templates import read_html_template
 
 from config import Config
-from .db import session
-from .models import Email, List, SMTPProfile
-from .forms import EmailForm, ListForm, AddToListForm, CSVUploadForm, TemplateUploadForm, SMTPProfileForm
+from ..db import session
+from ..models import Email, List
+from ..forms import EmailForm, ListForm, AddToListForm, CSVUploadForm
 
 email_bp=Blueprint("email", __name__)
 
@@ -187,103 +185,3 @@ def send_email_route():
 def show_emails():
     emails=session.query(Email).all()
     return render_template("emails.html", emails=emails)
-
-# Ruta para mostrar el formulario de subida de plantillas HTML
-@email_bp.route("/upload_template", methods=["GET", "POST"])
-def upload_template():
-    form=TemplateUploadForm()
-    if form.validate_on_submit():
-        template_name=form.template_name.data
-        template_content = form.template_content.data
-
-        # Crear el nombre del archivo con la extensión .html
-        filepath=make_html(template_name)
-
-        # Guardar el contenido HTML en el archivo
-        write_html_from_user(template_content, filepath)
-        
-        flash("Template uploaded successfully!", "success")
-        return redirect(url_for("email.upload_template"))
-    
-    return render_template("upload_template.html", form=form)
-
-# Ruta para mostrar todas las plantillas
-@email_bp.route("/templates")
-def show_templates():
-    templates=[]
-    for filename in os.listdir(Config.TEMPLATE_DIR):
-        if filename.endswith(".html"):
-            templates.append(filename)
-    return render_template('templates.html', templates=templates)
-
-# Ruta para acceder al contenido de una plantilla
-@email_bp.route("/templates/<filename>")
-def get_template(filename):
-    return send_from_directory(Config.TEMPLATE_DIR, filename)
-
-# Ruta para editar el contenido de una plantilla
-@email_bp.route("/edit_template/<filename>", methods=["GET", "POST"])
-def edit_template(filename):
-    filepath=os.path.join(Config.TEMPLATE_DIR, filename)
-    form=TemplateUploadForm()
-
-    if request.method == "POST" and form.validate_on_submit():
-        template_content=form.template_content.data
-        write_html_from_user(template_content, filepath)
-        flash("Template updated successfully!", "success")
-        return redirect(url_for("email.show_templates"))
-
-    with open(filepath, 'r', encoding='utf-8') as file:
-        form.template_name.data=filename.replace('.html', '')
-        form.template_content.data=file.read()
-
-    return render_template("edit_template.html", form=form, filename=filename)
-
-# Ruta para mostrar todos los perfiles SMTP
-@email_bp.route("/smtp_profiles")
-def show_smtp_profiles():
-    profiles = session.query(SMTPProfile).all()
-    return render_template('smtp_profiles.html', profiles=profiles)
-
-# Ruta para añadir un nuevo perfil SMTP
-@email_bp.route("/add_smtp_profile", methods=["GET", "POST"])
-def add_smtp_profile():
-    form=SMTPProfileForm()
-    if form.validate_on_submit():
-        profile=SMTPProfile(
-            service=form.service.data,
-            port=form.port.data,
-            email=form.email.data,
-            app_pass=form.app_pass.data,
-            from_name=form.from_name.data
-        )
-        session.add(profile)
-        session.commit()
-        flash("SMTP Profile added successfully!", "success")
-        return redirect(url_for("email.show_smtp_profiles"))
-    return render_template("add_smtp_profile.html", form=form)
-
-# Ruta para editar un perfil SMTP existente
-@email_bp.route("/edit_smtp_profile/<int:profile_id>", methods=["GET", "POST"])
-def edit_smtp_profile(profile_id):
-    profile=session.query(SMTPProfile).get(profile_id)
-    form=SMTPProfileForm(obj=profile)
-    if form.validate_on_submit():
-        profile.service=form.service.data
-        profile.port=form.port.data
-        profile.email=form.email.data
-        profile.app_pass=form.app_pass.data
-        profile.from_name=form.from_name.data
-        session.commit()
-        flash("SMTP Profile updated successfully!", "success")
-        return redirect(url_for("email.show_smtp_profiles"))
-    return render_template("edit_smtp_profile.html", form=form)
-
-# Ruta para eliminar un perfil SMTP existente
-@email_bp.route("/delete_smtp_profile/<int:profile_id>", methods=["POST"])
-def delete_smtp_profile(profile_id):
-    profile=session.query(SMTPProfile).get(profile_id)
-    session.delete(profile)
-    session.commit()
-    flash("SMTP Profile deleted successfully!", "success")
-    return redirect(url_for("email.show_smtp_profiles"))

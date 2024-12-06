@@ -16,8 +16,8 @@
         <tr>
             <td>{{ template }}</td>
             <td>
-                <a href="{{ url_for('email.get_template', filename=template) }}" class="button is-link">View</a>
-                <a href="{{ url_for('email.edit_template', filename=template) }}" class="button is-warning">Edit</a>
+                <a href="{{ url_for('templates.get_template', filename=template) }}" class="button is-link">View</a>
+                <a href="{{ url_for('templates.edit_template', filename=template) }}" class="button is-warning">Edit</a>
             </td>
         </tr>
         {% endfor %}
