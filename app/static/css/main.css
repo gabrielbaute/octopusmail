@@ -44,3 +44,11 @@ body {
 .panel-block:hover {
     background-color: var(--panel-block-hover);
 }
+
+.card {
+    margin-top: 50px;
+}
+
+.card .title {
+    margin-bottom: 20px;
+}

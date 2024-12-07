@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+    <link id="bulma-stylesheet" rel="stylesheet" href="{{ url_for('static', filename='css/bulma.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+<body>
+    <div class="section">
+        <header>
+            <nav class="navbar" role="navigation" aria-label="main navigation">
+                <div class="navbar-brand">
+                    <a class="navbar-item" href="{{ url_for('email.index') }}">
+                        <img src="{{ url_for('static', filename='images/pulpo_64.png') }}" alt="Logo">
+                    </a>
+                </div>
+                <div class="navbar-menu">
+                    <div class="navbar-end">
+                        <a class="navbar-item" href="{{ url_for('auth.login') }}">Login</a>
+                        <a class="navbar-item" href="{{ url_for('auth.register') }}">Register</a>
+                        <button id="theme-toggle" class="button is-primary">Toggle Theme</button>
+                    </div>
+                </div>
+            </nav>
+        </header>
+    </div>
+    <main>
+        <div class="section">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
