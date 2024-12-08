@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Listas de Correo{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <h1 class="title">Listas de Correo</h1>
+        <table class="table is-fullwidth is-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre de la Lista</th>
+                    <th>Número de Correos</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for email_list in lists %}
+                <tr>
+                    <td>{{ email_list.id }}</td>
+                    <td>{{ email_list.name }}</td>
+                    <td>{{ email_list.emails|length }}</td>
+                    <td>
+                        <a class="button is-small is-info" href="{{ url_for('email.edit_list', list_id=email_list.id) }}">Editar</a>
+                        <a class="button is-small is-danger" href="{{ url_for('email.delete_list', list_id=email_list.id) }}">Eliminar</a>
+                        <a class="button is-small is-primary" href="{{ url_for('email.send_email_to_list', list_name=email_list.name) }}">Enviar Correo</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

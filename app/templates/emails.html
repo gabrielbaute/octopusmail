@@ -1,31 +1,35 @@
 {% extends "base.html" %}
 
-{% block title %}Emails List{% endblock %}
+{% block title %}Emails{% endblock %}
 
 {% block content %}
-<h1 class="title">List of Emails</h1>
-<table class="table is-striped is-fullwidth">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Email</th>
-            <th>Name</th>
-            <th>Lists</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for email in emails %}
-        <tr>
-            <td>{{ email.id }}</td>
-            <td>{{ email.email }}</td>
-            <td>{{ email.name }}</td>
-            <td>
-                {% for list in email.lists %}
-                    {{ list.name }}{% if not loop.last %}, {% endif %}
+<section class="section">
+    <div class="container">
+        <h1 class="title">Lista de Emails</h1>
+        <table class="table is-fullwidth is-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Email</th>
+                    <th>Nombre de Usuario</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for email in emails %}
+                <tr>
+                    <td>{{ email.id }}</td>
+                    <td>{{ email.email }}</td>
+                    <td>{{ email.name }}</td>
+                    <td>
+                        <a class="button is-small is-info" href="{{ url_for('email.edit_email', email_id=email.id) }}">Editar</a>
+                        <a class="button is-small is-danger" href="{{ url_for('email.delete_email', email_id=email.id) }}">Eliminar</a>
+                        <a class="button is-small is-primary" href="{{ url_for('email.manage_email', email_id=email.id) }}">Administrar</a>
+                    </td>
+                </tr>
                 {% endfor %}
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+            </tbody>
+        </table>
+    </div>
+</section>
 {% endblock %}

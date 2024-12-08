@@ -30,6 +30,25 @@
             </nav>
         </div>
     </header>
+    <!-- Contenedor para los mensajes flash -->
+    <section class="section">
+        <div class="container">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div class="notification is-light">
+                {% for category, message in messages %}
+                <div class="notification is-{{ category }}">
+                    <button class="delete"></button>
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% endwith %}
+        </div>
+    </section>
+    
+    <!-- Sidebar -->
     <div class="columns">
         <aside class="column is-one-fifth sidebar">
             <ul class="panel">
@@ -38,19 +57,23 @@
                 <li><a class="panel-block" href="{{ url_for('email.send_email_form') }}">Enviar correos</a></li>
                 <li><a class="panel-block" href="{{ url_for('email.add_email') }}">Añadir un nuevo correo</a></li>
                 <li><a class="panel-block" href="{{ url_for('email.create_list') }}">Crear una nueva lista de correo</a></li>
-                <li><a class="panel-block" href="{{ url_for('email.add_to_list') }}">Añadir correos a listas</a></li>
+                <li><a class="panel-block" href="{{ url_for('email.show_lists') }}">Gestiona tus listas</a></li>
                 <li><a class="panel-block" href="{{ url_for('email.upload_csv') }}">Añadir remitentes desde archivo (csv)</a></li>
                 <li><a class="panel-block" href="{{ url_for('email.show_emails') }}">Consulta tus emails</a></li>
                 <li><a class="panel-block" href="{{ url_for('templates.show_templates') }}">Consulta tus plantillas</a></li>
                 <li><a class="panel-block" href="{{ url_for('templates.upload_template') }}">Subir plantilla HTML</a></li>
             </ul>
         </aside>
+
+        <!-- Content block -->
         <main class="column">
             <div class="section">
                 {% block content %}{% endblock %}
             </div>
         </main>
     </div>
+
+    <!-- Scripts -->
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 
     <!-- Footer -->

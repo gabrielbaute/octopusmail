@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Administrar Email{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <h1 class="title">Administrar Email</h1>
+        <div class="buttons">
+            <a class="button is-info" href="{{ url_for('email.edit_email', email_id=email.id) }}">Editar</a>
+            <a class="button is-danger" href="{{ url_for('email.delete_email', email_id=email.id) }}">Eliminar</a>
+        </div>
+        <h2 class="subtitle">Agregar a Listas</h2>
+        <!-- Aquí puedes añadir el formulario para agregar el email a listas -->
+    </div>
+</section>
+{% endblock %}

@@ -16,6 +16,10 @@ class AddToListForm(FlaskForm):
     list_name=StringField("List Name", validators=[DataRequired()])
     submit=SubmitField("Add to List")
 
+class EditListForm(FlaskForm):
+    name=StringField("List Name", validators=[DataRequired()])
+    submit=SubmitField("Save Changes")
+
 class CSVUploadForm(FlaskForm):
     csv_file=FileField("CSV File", validators=[DataRequired()])
     list_name=StringField("List Name")

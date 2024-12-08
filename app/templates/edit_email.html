@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Email{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <h1 class="title">Editar Email</h1>
+        <form method="POST">
+            <div class="field">
+                <label class="label">Email</label>
+                <div class="control">
+                    <input class="input" type="text" name="email" value="{{ email.email }}">
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Nombre de Usuario</label>
+                <div class="control">
+                    <input class="input" type="text" name="name" value="{{ email.name }}">
+                </div>
+            </div>
+            <div class="field">
+                <div class="control">
+                    <button class="button is-primary">Guardar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

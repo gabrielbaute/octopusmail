@@ -19,7 +19,7 @@ from core.html_templates import read_html_template
 from config import Config
 from ..db import session
 from ..models import Email, List
-from ..forms import EmailForm, ListForm, AddToListForm, CSVUploadForm
+from ..forms import EmailForm, ListForm, AddToListForm, EditListForm, CSVUploadForm
 
 email_bp=Blueprint("email", __name__)
 
@@ -75,6 +75,36 @@ def add_to_list():
         else:
             flash("Email or List not found", "danger")
     return render_template("add_to_list.html", form=form)
+
+# Ruta para mostrar las listas de correos
+@email_bp.route("/lists")
+@login_required
+def show_lists():
+    lists=session.query(List).all()
+    return render_template("list_list.html", lists=lists)
+
+# Ruta para editar una lista
+@email_bp.route("/edit_list/<int:list_id>", methods=["GET", "POST"])
+@login_required
+def edit_list(list_id):
+    email_list=session.query(List).get(list_id)
+    form=EditListForm(obj=email_list)
+    if form.validate_on_submit():
+        email_list.name=form.name.data
+        session.commit()
+        flash("Lista actualizada correctamente.", "success")
+        return redirect(url_for("email.show_lists"))
+    return render_template("edit_list.html", form=form)
+
+# Ruta para eliminar una lista
+@email_bp.route("/delete_list/<int:list_id>")
+@login_required
+def delete_list(list_id):
+    email_list=session.query(List).get(list_id)
+    session.delete(email_list)
+    session.commit()
+    flash("Lista eliminada correctamente.", "success")
+    return redirect(url_for("email.show_lists"))
 
 @email_bp.route("/upload_csv", methods=["GET", "POST"])
 @login_required
@@ -189,8 +219,45 @@ def send_email_route():
         serverQuit(server_instance)
     return redirect(url_for("email.show_emails"))
 
+# Ruta para enviar correos a una lista específica
+@email_bp.route("/send_email_to_list/<string:list_name>")
+@login_required
+def send_email_to_list(list_name):
+    return redirect(url_for("email.send_email_form", list_name=list_name))
+
+
+# Ruta para mostrar todos los emails registrados
 @email_bp.route("/emails")
 @login_required
 def show_emails():
     emails=session.query(Email).all()
     return render_template("emails.html", emails=emails)
+
+# Ruta para editar email
+@email_bp.route("/edit_email/<int:email_id>", methods=["GET", "POST"])
+@login_required
+def edit_email(email_id):
+    email=session.query(Email).get(email_id)
+    if request.method == "POST":
+        email.email=request.form["email"]
+        email.name=request.form["name"]
+        session.commit()
+        flash("Email actualizado correctamente.", "success")
+        return redirect(url_for("email.show_emails"))
+    return render_template("edit_email.html", email=email)
+
+# Ruta para eliminar email
+@email_bp.route("/delete_email/<int:email_id>")
+def delete_email(email_id):
+    email=session.query(Email).get(email_id)
+    session.delete(email)
+    session.commit()
+    flash("Email eliminado correctamente!", "success")
+    return redirect(url_for("email.show_emails"))
+
+# Ruta para administrar email
+@email_bp.route("/manage_email/<int:email_id>")
+@login_required
+def manage_email(email_id):
+    email=session.query(Email).get(email_id)
+    return render_template("manage_email.html", email=email)
