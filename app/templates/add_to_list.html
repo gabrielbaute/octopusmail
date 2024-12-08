@@ -4,24 +4,28 @@
 
 {% block content %}
 <h1 class="title">Añadir Correo a Lista</h1>
-<form method="POST">
-    {{ form.hidden_tag() }}
-    <div class="field">
-        <label class="label">{{ form.email.label }}</label>
-        <div class="control">
-            {{ form.email(class_="input") }}
-        </div>
+<div class="section">
+    <div class="container">
+        <form method="POST">
+            {{ form.hidden_tag() }}
+            <div class="field">
+                <label class="label">{{ form.email.label }}</label>
+                <div class="control">
+                    {{ form.email(class_="input") }}
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">{{ form.list_name.label }}</label>
+                <div class="control">
+                    {{ form.list_name(class_="input") }}
+                </div>
+            </div>
+            <div class="field">
+                <div class="control">
+                    {{ form.submit(class_="button is-primary") }}
+                </div>
+            </div>
+        </form>
     </div>
-    <div class="field">
-        <label class="label">{{ form.list_name.label }}</label>
-        <div class="control">
-            {{ form.list_name(class_="input") }}
-        </div>
-    </div>
-    <div class="field">
-        <div class="control">
-            {{ form.submit(class_="button is-primary") }}
-        </div>
-    </div>
-</form>
+</div>
 {% endblock %}

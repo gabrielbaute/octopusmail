@@ -4,23 +4,27 @@
 
 {% block content %}
 <h1 class="title">Templates</h1>
-<table class="table is-striped is-fullwidth">
-    <thead>
-        <tr>
-            <th>Template Name</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for template in templates %}
-        <tr>
-            <td>{{ template }}</td>
-            <td>
-                <a href="{{ url_for('templates.get_template', filename=template) }}" class="button is-link">View</a>
-                <a href="{{ url_for('templates.edit_template', filename=template) }}" class="button is-warning">Edit</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="section">
+    <div class="container">
+        <table class="table is-striped is-fullwidth">
+            <thead>
+                <tr>
+                    <th>Template Name</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for template in templates %}
+                <tr>
+                    <td>{{ template }}</td>
+                    <td>
+                        <a href="{{ url_for('templates.get_template', filename=template) }}" class="button is-link">View</a>
+                        <a href="{{ url_for('templates.edit_template', filename=template) }}" class="button is-warning">Edit</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 {% endblock %}

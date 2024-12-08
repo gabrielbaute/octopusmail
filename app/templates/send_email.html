@@ -4,78 +4,82 @@
 
 {% block content %}
 <h1 class="title">Send Email</h1>
-<form method="POST" action="{{ url_for('email.send_email_route') }}" enctype="multipart/form-data">
-    <div class="field">
-        <label class="label">Select Mode</label>
-        <div class="control">
-            <div class="select">
-                <select name="send_mode" id="send_mode">
-                    <option value="individual">Individual</option>
-                    <option value="list">List</option>
-                    <option value="all">All</option>
-                </select>
+<div class="section">
+    <div class="container">
+        <form method="POST" action="{{ url_for('email.send_email_route') }}" enctype="multipart/form-data">
+            <div class="field">
+                <label class="label">Select Mode</label>
+                <div class="control">
+                    <div class="select">
+                        <select name="send_mode" id="send_mode">
+                            <option value="individual">Individual</option>
+                            <option value="list">List</option>
+                            <option value="all">All</option>
+                        </select>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-    
-    <!-- Email para Individual -->
-    <div class="field individual-field">
-        <label class="label">Receiver Email</label>
-        <div class="control">
-            <input class="input" type="email" name="receiver" id="receiver">
-        </div>
-    </div>
-    
-    <!-- Selección de Lista -->
-    <div class="field list-field">
-        <label class="label">Select List</label>
-        <div class="control">
-            <div class="select">
-                <select name="list_id" id="list_id">
-                    {% for list in lists %}
-                    <option value="{{ list.id }}">{{ list.name }}</option>
-                    {% endfor %}
-                </select>
+            
+            <!-- Email para Individual -->
+            <div class="field individual-field">
+                <label class="label">Receiver Email</label>
+                <div class="control">
+                    <input class="input" type="email" name="receiver" id="receiver">
+                </div>
             </div>
-        </div>
-    </div>
-    
-    <!-- Nombre del receptor para Individual -->
-    <div class="field individual-field">
-        <label class="label">Receiver Name</label>
-        <div class="control">
-            <input class="input" type="text" name="receiver_name" id="receiver_name">
-        </div>
-    </div>
-    
-    <div class="field">
-        <label class="label">Subject</label>
-        <div class="control">
-            <input class="input" type="text" name="subject" required>
-        </div>
-    </div>
-    <div class="field">
-        <label class="label">Template Path</label>
-        <div class="control">
-            <div class="select">
-                <select name="template_path" id="template_path">
-                    {% for template in templates %}
-                    <option value="{{ template }}">{{ template }}</option>
-                    {% endfor %}
-                </select>
+            
+            <!-- Selección de Lista -->
+            <div class="field list-field">
+                <label class="label">Select List</label>
+                <div class="control">
+                    <div class="select">
+                        <select name="list_id" id="list_id">
+                            {% for list in lists %}
+                            <option value="{{ list.id }}">{{ list.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
             </div>
-        </div>
+            
+            <!-- Nombre del receptor para Individual -->
+            <div class="field individual-field">
+                <label class="label">Receiver Name</label>
+                <div class="control">
+                    <input class="input" type="text" name="receiver_name" id="receiver_name">
+                </div>
+            </div>
+            
+            <div class="field">
+                <label class="label">Subject</label>
+                <div class="control">
+                    <input class="input" type="text" name="subject" required>
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Template Path</label>
+                <div class="control">
+                    <div class="select">
+                        <select name="template_path" id="template_path">
+                            {% for template in templates %}
+                            <option value="{{ template }}">{{ template }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Attachment Path (optional)</label>
+                <div class="control">
+                    <input class="input" type="text" name="attachment_path">
+                </div>
+            </div>
+            <div class="field">
+                <div class="control">
+                    <button class="button is-primary" type="submit">Send Email</button>
+                </div>
+            </div>
+        </form>
     </div>
-    <div class="field">
-        <label class="label">Attachment Path (optional)</label>
-        <div class="control">
-            <input class="input" type="text" name="attachment_path">
-        </div>
-    </div>
-    <div class="field">
-        <div class="control">
-            <button class="button is-primary" type="submit">Send Email</button>
-        </div>
-    </div>
-</form>
+</div>
 {% endblock %}

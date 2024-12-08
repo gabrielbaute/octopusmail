@@ -3,43 +3,47 @@
 {% block title %}Add SMTP Profile{% endblock %}
 
 {% block content %}
-<h1 class="title">{{ form.title }}</h1>
-<form method="POST">
-    {{ form.hidden_tag() }}
-    <div class="field">
-        <label class="label">{{ form.service.label }}</label>
-        <div class="control">
-            {{ form.service(class_='input') }}
-        </div>
+<div class="section">
+    <div class="container">
+        <h1 class="title">{{ form.title }}</h1>
+        <form method="POST">
+            {{ form.hidden_tag() }}
+            <div class="field">
+                <label class="label">{{ form.service.label }}</label>
+                <div class="control">
+                    {{ form.service(class_='input') }}
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">{{ form.port.label }}</label>
+                <div class="control">
+                    {{ form.port(class_='input') }}
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">{{ form.email.label }}</label>
+                <div class="control">
+                    {{ form.email(class_='input') }}
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">{{ form.app_pass.label }}</label>
+                <div class="control">
+                    {{ form.app_pass(class_='input') }}
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">{{ form.from_name.label }}</label>
+                <div class="control">
+                    {{ form.from_name(class_='input') }}
+                </div>
+            </div>
+            <div class="field">
+                <div class="control">
+                    {{ form.submit(class_='button is-primary') }}
+                </div>
+            </div>
+        </form>
     </div>
-    <div class="field">
-        <label class="label">{{ form.port.label }}</label>
-        <div class="control">
-            {{ form.port(class_='input') }}
-        </div>
-    </div>
-    <div class="field">
-        <label class="label">{{ form.email.label }}</label>
-        <div class="control">
-            {{ form.email(class_='input') }}
-        </div>
-    </div>
-    <div class="field">
-        <label class="label">{{ form.app_pass.label }}</label>
-        <div class="control">
-            {{ form.app_pass(class_='input') }}
-        </div>
-    </div>
-    <div class="field">
-        <label class="label">{{ form.from_name.label }}</label>
-        <div class="control">
-            {{ form.from_name(class_='input') }}
-        </div>
-    </div>
-    <div class="field">
-        <div class="control">
-            {{ form.submit(class_='button is-primary') }}
-        </div>
-    </div>
-</form>
+</div>
 {% endblock %}
