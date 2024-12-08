@@ -19,6 +19,35 @@
                     <button class="button is-primary">Guardar</button>
                 </div>
             </div>
+            
+            <h2 class="title is-4">Agregar Correos a la Lista</h2>
+            <table class="table is-fullwidth is-striped">
+                <thead>
+                    <tr>
+                        <th>Seleccionar</th>
+                        <th>Email</th>
+                        <th>Nombre de Usuario</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for email in all_emails %}
+                    <tr>
+                        <td>
+                            <input type="checkbox" name="emails" value="{{ email.id }}"
+                            {% if email in email_list.emails %} checked {% endif %}>
+                        </td>
+                        <td>{{ email.email }}</td>
+                        <td>{{ email.name }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            
+            <div class="field">
+                <div class="control">
+                    <button class="button is-primary">Actualizar Correos</button>
+                </div>
+            </div>
         </form>
     </div>
 </section>

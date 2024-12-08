@@ -60,6 +60,7 @@ def create_list():
         return redirect(url_for("email.create_list"))
     return render_template("create_list.html", form=form)
 
+# Agregar correos a una lista, deprecated.
 @email_bp.route("/add_to_list", methods=["GET", "POST"])
 @login_required
 def add_to_list():
@@ -89,12 +90,21 @@ def show_lists():
 def edit_list(list_id):
     email_list=session.query(List).get(list_id)
     form=EditListForm(obj=email_list)
+    all_emails=session.query(Email).all()
+
     if form.validate_on_submit():
         email_list.name=form.name.data
+        
+        # Actualizar los correos en la lista
+        selected_emails=request.form.getlist("emails")
+        selected_email_objects=[session.query(Email).get(int(email_id)) for email_id in selected_emails]
+        email_list.emails=selected_email_objects
+
         session.commit()
         flash("Lista actualizada correctamente.", "success")
         return redirect(url_for("email.show_lists"))
-    return render_template("edit_list.html", form=form)
+    
+    return render_template("edit_list.html", form=form, all_emails=all_emails, email_list=email_list)
 
 # Ruta para eliminar una lista
 @email_bp.route("/delete_list/<int:list_id>")
