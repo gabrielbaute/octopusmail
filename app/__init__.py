@@ -28,16 +28,8 @@ def create_app():
 
     initialize_smtp_config(app)
 
-    # Cargar los blueprint de las rutas
-    from app.routes.email_routes import email_bp
-    from app.routes.auth_routes import auth_bp
-    from app.routes.template_routes import templates_bp
-    from app.routes.smtp_routes import smtp_bp
-    from app.routes.lists_routes import lists_bp
-    app.register_blueprint(email_bp)
-    app.register_blueprint(auth_bp)
-    app.register_blueprint(templates_bp)
-    app.register_blueprint(smtp_bp)
-    app.register_blueprint(lists_bp)
+    # Carga de los blueprints de enrutamiento
+    from app.routes import register_blueprints
+    register_blueprints(app)
 
     return app
