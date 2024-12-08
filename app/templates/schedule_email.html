@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Programar Envío de Correo{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <h1 class="title">Programar Envío de Correo</h1>
+        <form method="POST" action="{{ url_for('email.schedule_email') }}">
+            {{ form.hidden_tag() }}
+            <div class="field">
+                <label class="label">Asunto</label>
+                <div class="control">
+                    {{ form.subject(class='input') }}
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Plantilla</label>
+                <div class="control">
+                    {{ form.template_path(class='input') }}
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Ruta del Adjunto</label>
+                <div class="control">
+                    {{ form.attachment_path(class='input') }}
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Fecha y Hora de Envío</label>
+                <div class="control">
+                    {{ form.schedule_time(class='input', placeholder='Formato: YYYY-MM-DD HH:MM:SS') }}
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Modo de Envío</label>
+                <div class="control">
+                    {{ form.send_mode(class='input') }}
+                </div>
+            </div>
+            <div class="field individual">
+                <label class="label">Correo del Receptor</label>
+                <div class="control">
+                    {{ form.receiver(class='input') }}
+                </div>
+            </div>
+            <div class="field individual">
+                <label class="label">Nombre del Receptor</label>
+                <div class="control">
+                    {{ form.receiver_name(class='input') }}
+                </div>
+            </div>
+            <div class="field list">
+                <label class="label">Nombre de la Lista</label>
+                <div class="control">
+                    <select name="list_id" class="input">
+                        {% for list in all_lists %}
+                        <option value="{{ list.id }}">{{ list.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="field">
+                <div class="control">
+                    <button class="button is-primary">Programar Envío</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

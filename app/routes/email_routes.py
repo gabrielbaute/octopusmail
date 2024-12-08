@@ -2,6 +2,7 @@ import smtplib
 import os
 from datetime import datetime
 from werkzeug.utils import secure_filename
+from apscheduler.schedulers.background import BackgroundScheduler
 from flask_login import login_required
 from flask import(
     Blueprint, 
@@ -15,15 +16,17 @@ from flask import(
 
 from core.importcsv import importcsv
 from core.smtpconnect import(serverStart, serverQuit)
-from core.mailer import(headerCompose, bodyCompose_with_content, attachMedia)
+from core.mailer import(headerCompose, bodyCompose_with_content, attachMedia, send_scheduled_email)
 from core.html_templates import read_html_template
 
 from config import Config
 from ..db import session
 from ..models import Email, List, SendDate
-from ..forms import EmailForm, CSVUploadForm
+from ..forms import EmailForm, CSVUploadForm, ScheduleEmailForm
 
 email_bp=Blueprint("email", __name__)
+scheduler=BackgroundScheduler()
+scheduler.start()
 
 @email_bp.route("/")
 @login_required
@@ -183,6 +186,60 @@ def send_email_route():
     finally:
         serverQuit(server_instance)
     return redirect(url_for("email.show_emails"))
+
+# Ruta para mostrar el formulario de programación de correos
+@email_bp.route('/schedule_email', methods=['GET', 'POST'])
+@login_required
+def schedule_email():
+    form = ScheduleEmailForm()
+    templates = [filename for filename in os.listdir(Config.TEMPLATE_DIR) if filename.endswith('.html')]
+    form.template_path.choices = [(template, template) for template in templates]
+
+    if form.validate_on_submit():
+        subject = form.subject.data
+        template_path = form.template_path.data
+        attachment_path = form.attachment_path.data
+        schedule_time = form.schedule_time.data
+        send_mode = form.send_mode.data
+        receiver = form.receiver.data
+        receiver_name = form.receiver_name.data
+        list_id = form.list_id.data
+
+        # Programar el envío del correo
+        scheduler.add_job(func=send_scheduled_email, trigger='date', run_date=schedule_time, args=[subject, template_path, attachment_path, send_mode, receiver, receiver_name, list_id])
+        
+        # Actualizar las métricas en la base de datos
+        if send_mode == "individual":
+            email = session.query(Email).filter_by(email=receiver).first()
+            email.sent_count += 1
+            send_date = SendDate(email=email, timestamp=datetime.utcnow())
+            session.add(email)
+            session.add(send_date)
+        
+        elif send_mode == "list":
+            email_list = session.query(List).get(list_id)
+            for email in email_list.emails:
+                email.sent_count += 1
+                send_date = SendDate(email=email, list=email_list, timestamp=datetime.utcnow())
+                session.add(email)
+                session.add(send_date)
+            email_list.send_count += 1
+            session.add(email_list)
+        
+        elif send_mode == "all":
+            all_emails = session.query(Email).all()
+            for email in all_emails:
+                email.sent_count += 1
+                send_date = SendDate(email=email, timestamp=datetime.utcnow())
+                session.add(email)
+                session.add(send_date)
+
+        session.commit()
+        
+        flash('Correo programado correctamente', 'success')
+        return redirect(url_for('email.schedule_email'))
+
+    return render_template('schedule_email.html', form=form)
 
 # Ruta para mostrar todos los emails registrados
 @email_bp.route("/emails")

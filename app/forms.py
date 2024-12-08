@@ -1,11 +1,22 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, FileField, SelectField, TextAreaField, IntegerField, PasswordField
+from wtforms import StringField, SubmitField, FileField, SelectField, TextAreaField, IntegerField, PasswordField, DateTimeField
 from wtforms.validators import DataRequired, Email, EqualTo
 
 class EmailForm(FlaskForm):
     email=StringField("Email", validators=[DataRequired(), Email()])
     name=StringField("Name", validators=[DataRequired()])
     submit=SubmitField("Add email")
+
+class ScheduleEmailForm(FlaskForm):
+    subject=StringField("Subject", validators=[DataRequired()])
+    template_path=SelectField("Template", validators=[DataRequired()])
+    attachment_path=StringField("Attachment Path")
+    schedule_time=DateTimeField("Schedule Time", format="%Y-%m-%d %H:%M:%S", validators=[DataRequired()])
+    send_mode=SelectField("Send Mode", choices=[("individual", "Individual"), ("list", "List"), ("all", "All")], validators=[DataRequired()])
+    receiver=StringField("Receiver Email")
+    receiver_name=StringField("Receiver Name")
+    list_id=StringField("List ID")
+    submit=SubmitField("Schedule Email")
 
 class ListForm(FlaskForm):
     name=StringField("List Name", validators=[DataRequired()])

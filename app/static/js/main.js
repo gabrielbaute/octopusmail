@@ -93,6 +93,28 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // Sendmode en scheduler
+    const sendModeField = document.querySelector('select[name="send_mode"]');
+    const individualFields = document.querySelectorAll('.individual');
+    const listFields = document.querySelectorAll('.list');
+
+    function updateForm() {
+        const sendMode = sendModeField.value;
+        if (sendMode === 'individual') {
+            individualFields.forEach(field => field.style.display = 'block');
+            listFields.forEach(field => field.style.display = 'none');
+        } else if (sendMode === 'list') {
+            individualFields.forEach(field => field.style.display = 'none');
+            listFields.forEach(field => field.style.display = 'block');
+        } else if (sendMode === 'all') {
+            individualFields.forEach(field => field.style.display = 'none');
+            listFields.forEach(field => field.style.display = 'none');
+        }
+    }
+
+    sendModeField.addEventListener('change', updateForm);
+    updateForm();  // Initialize the form
 });
 
 

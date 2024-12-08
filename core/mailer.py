@@ -5,7 +5,10 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
 from email.utils import formataddr
 from email import encoders
-
+from core.smtpconnect import serverStart, serverQuit
+from core.html_templates import read_html_template
+from app.models import Email, List
+from app.db import session
     
 def headerCompose(receiver, subject):
     msg=MIMEMultipart()
@@ -46,3 +49,44 @@ def attachMedia(filepath, msg):
         msg.attach(p)
 
     return msg
+
+def send_scheduled_email(subject, template_path, attachment_path, send_mode, receiver, receiver_name, list_id):    
+
+    template_content=read_html_template(template_path)
+    server_instance=serverStart()
+    
+    if not server_instance:
+        print("Failed to connect to SMTP server")
+        return
+
+    try:
+        if send_mode == "individual":
+            msg=headerCompose(receiver, subject)
+            msg=bodyCompose_with_content(template_content, receiver_name, msg)
+            if attachment_path:
+                msg = attachMedia(attachment_path, msg)
+            server_instance.sendmail(msg["From"], msg["To"], msg.as_string())
+
+        elif send_mode == "list":
+            email_list = session.query(List).get(list_id)
+            for email in email_list.emails:
+                msg=headerCompose(email.email, subject)
+                msg=bodyCompose_with_content(template_content, email.name, msg)
+                if attachment_path:
+                    msg=attachMedia(attachment_path, msg)
+                server_instance.sendmail(msg["From"], msg["To"], msg.as_string())
+
+        elif send_mode == "all":
+            all_emails=session.query(Email).all()
+            for email in all_emails:
+                msg=headerCompose(email.email, subject)
+                msg=bodyCompose_with_content(template_content, email.name, msg)
+                if attachment_path:
+                    msg=attachMedia(attachment_path, msg)
+                server_instance.sendmail(msg["From"], msg["To"], msg.as_string())
+
+        print("Scheduled email sent successfully!")
+    except Exception as e:
+        print(f"Failed to send email: {e}")
+    finally:
+        serverQuit(server_instance) 
