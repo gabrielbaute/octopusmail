@@ -61,10 +61,13 @@
             <p>Este es un correo de prueba que hemos diseñado para ti.</p>
             <p>Esperamos que encuentres útil esta plantilla y te ayude a mejorar tus correos electrónicos.</p>
             <a href="#" class="button">Más Información</a>
+            <img src="{{ url_for('track_open', email_id=email.id, _external=True) }}" alt="" width="1" height="1">
         </div>
         <div class="footer">
             <p>&copy; 2024 Tu Empresa. Todos los derechos reservados.</p>
         </div>
     </div>
+    <!-- Pixel de seguimiento -->
+
 </body>
 </html>

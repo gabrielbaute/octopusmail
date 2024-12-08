@@ -1,7 +1,8 @@
-from sqlalchemy import create_engine, Column, Integer, String, Table, ForeignKey
+from sqlalchemy import create_engine, Column, Integer, String, Table, ForeignKey, DateTime
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
+from datetime import datetime
 from flask_login import UserMixin
 from .db import engine
 
@@ -42,12 +43,26 @@ class Email(Base):
     email=Column(String, unique=True, nullable=False)
     name=Column(String, nullable=False)
     lists=relationship("List", secondary=email_list_asociation, back_populates="emails")
+    sent_count=Column(Integer, default=0)
+    open_count=Column(Integer, default=0)
+    send_dates=relationship("SendDate", back_populates="email")
 
 class List(Base):
     __tablename__="lists"
     id=Column(Integer, primary_key=True)
     name=Column(String, unique=True, nullable=False)
     emails=relationship("Email", secondary=email_list_asociation, back_populates="lists")
+    send_count=Column(Integer, default=0)
+    send_dates=relationship("SendDate", back_populates="list")
+
+class SendDate(Base):
+    __tablename__="send_dates"
+    id=Column(Integer, primary_key=True)
+    email_id=Column(Integer, ForeignKey("emails.id"))
+    list_id=Column(Integer, ForeignKey("lists.id"))
+    timestamp=Column(DateTime, default=datetime.utcnow)
+    email=relationship("Email", back_populates="send_dates")
+    list=relationship("List", back_populates="send_dates")
 
 class SMTPProfile(Base):
     __tablename__="smtp_profiles"

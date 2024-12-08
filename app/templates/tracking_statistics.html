@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Estadísticas de Seguimiento{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <h1 class="title">Estadísticas de Seguimiento</h1>
+
+        <h2 class="subtitle">Correos Enviados por Contacto</h2>
+        <table class="table is-fullwidth is-striped">
+            <thead>
+                <tr>
+                    <th>Email</th>
+                    <th>Nombre de Usuario</th>
+                    <th>Correos Enviados</th>
+                    <th>Correos Abiertos</th>
+                    <th>Última Fecha de Envío</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for email in emails %}
+                <tr>
+                    <td>{{ email.email }}</td>
+                    <td>{{ email.name }}</td>
+                    <td>{{ email.sent_count }}</td>
+                    <td>{{ email.open_count }}</td>
+                    <td>{% if email.send_dates %}{{ email.send_dates[-1].timestamp }}{% else %}N/A{% endif %}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h2 class="subtitle">Envíos por Lista</h2>
+        <table class="table is-fullwidth is-striped">
+            <thead>
+                <tr>
+                    <th>Nombre de la Lista</th>
+                    <th>Envíos Totales</th>
+                    <th>Última Fecha de Envío</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for list in lists %}
+                <tr>
+                    <td>{{ list.name }}</td>
+                    <td>{{ list.send_count }}</td>
+                    <td>{% if list.send_dates %}{{ list.send_dates[-1].timestamp }}{% else %}N/A{% endif %}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

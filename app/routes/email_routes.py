@@ -1,5 +1,6 @@
 import smtplib
 import os
+from datetime import datetime
 from werkzeug.utils import secure_filename
 from flask_login import login_required
 from flask import(
@@ -18,7 +19,7 @@ from core.html_templates import read_html_template
 
 from config import Config
 from ..db import session
-from ..models import Email, List
+from ..models import Email, List, SendDate
 from ..forms import EmailForm, CSVUploadForm
 
 email_bp=Blueprint("email", __name__)
@@ -131,6 +132,13 @@ def send_email_route():
             if attachment_path:
                 msg=attachMedia(attachment_path, msg)
             server_instance.sendmail(msg['From'], msg['To'], msg.as_string())
+
+            # Actualizar métricas para el receptor individual
+            email = session.query(Email).filter_by(email=receiver).first()
+            email.sent_count += 1
+            send_date = SendDate(email=email, timestamp=datetime.utcnow())
+            session.add(email)
+            session.add(send_date)
         
         elif send_mode == "list":
             list_id=request.form.get("list_id")
@@ -141,6 +149,16 @@ def send_email_route():
                 if attachment_path:
                     msg=attachMedia(attachment_path, msg)
                 server_instance.sendmail(msg['From'], msg['To'], msg.as_string())
+
+                # Actualizar métricas para cada email en la lista
+                email.sent_count += 1
+                send_date = SendDate(email=email, list=email_list, timestamp=datetime.utcnow())
+                session.add(email)
+                session.add(send_date)
+            
+            # Actualizar métrica para la lista
+            email_list.send_count += 1
+            session.add(email_list)
         
         elif send_mode == "all":
             all_emails=session.query(Email).all()
@@ -150,6 +168,14 @@ def send_email_route():
                 if attachment_path:
                     msg=attachMedia(attachment_path, msg)
                 server_instance.sendmail(msg['From'], msg['To'], msg.as_string())
+
+                # Actualizar métricas para cada email
+                email.sent_count += 1
+                send_date = SendDate(email=email, timestamp=datetime.utcnow())
+                session.add(email)
+                session.add(send_date)
+
+        session.commit()
         flash("Email sent successfully!", "success")
     except Exception as e:
         flash(f"Failed to send email: {e}", "danger")
