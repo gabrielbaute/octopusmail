@@ -9,7 +9,7 @@
 </head>
 <body>
     <header>
-        <div class="section">
+        <div class="box">
             <nav class="navbar" role="navigation" aria-label="main navigation">
                 <div class="navbar-brand">
                     <a class="navbar-item" href="{{ url_for('email.index') }}">
@@ -30,23 +30,6 @@
             </nav>
         </div>
     </header>
-    <!-- Contenedor para los mensajes flash -->
-    <section class="section">
-        <div class="container">
-            {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-            <div class="notification is-light">
-                {% for category, message in messages %}
-                <div class="notification is-{{ category }}">
-                    <button class="delete"></button>
-                    {{ message }}
-                </div>
-                {% endfor %}
-            </div>
-            {% endif %}
-            {% endwith %}
-        </div>
-    </section>
     
     <!-- Sidebar -->
     <div class="columns">
@@ -65,9 +48,27 @@
             </ul>
         </aside>
 
+        <!-- Contenedor para los mensajes flash -->
+        <section class="section">
+            <div class="container">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                <div class="notification is-light">
+                    {% for category, message in messages %}
+                    <div class="notification is-{{ category }}">
+                        <button class="delete"></button>
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% endwith %}
+            </div>
+        </section>
+
         <!-- Content block -->
         <main class="column">
-            <div class="section">
+            <div class="container content">
                 {% block content %}{% endblock %}
             </div>
         </main>

@@ -22,8 +22,8 @@ body {
 }
 
 .sidebar {
-    background-color: var(--panel-background);
-    padding: 20px;
+    padding-top: 2%;
+    padding-left: 20px;
 }
 
 .panel {
@@ -51,4 +51,8 @@ body {
 
 .card .title {
     margin-bottom: 20px;
+}
+
+.content {
+    margin-top: 2%;
 }
