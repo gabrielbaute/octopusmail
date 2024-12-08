@@ -26,6 +26,34 @@
             </nav>
         </header>
     </div>
+
+    <!-- Modal para mensajes flash -->
+    <div id="flash-modal" class="modal">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">OctopusMail</p>
+                <button class="delete" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                <div>
+                    {% for category, message in messages %}
+                    <div class="notification is-{{ category }}">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% endwith %}
+            </section>
+            <footer class="modal-card-foot">
+                <button class="button is-success" onclick="closeModal()">OK</button>
+            </footer>
+        </div>
+    </div>
+
     <main>
         <div class="section">
             {% block content %}{% endblock %}

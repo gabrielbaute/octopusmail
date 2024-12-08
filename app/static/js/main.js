@@ -26,6 +26,22 @@ document.addEventListener('DOMContentLoaded', () => {
         sendModeSelect.dispatchEvent(new Event('change'));
     }
 
+    // Controlador para las notificaciones flash en modal
+    const modal = document.getElementById('flash-modal');
+    const closeButton = document.querySelector('.modal .delete');
+    const okButton = document.querySelector('.modal .button.is-success');
+
+    if (modal && modal.querySelector('.notification')) {
+        modal.classList.add('is-active');
+    }
+
+    const closeModal = () => {
+        modal.classList.remove('is-active');
+    }
+
+    closeButton.addEventListener('click', closeModal);
+    okButton.addEventListener('click', closeModal);
+
     // Manejar el cambio de tema
     const themeToggle = document.getElementById('theme-toggle');
     const htmlElement = document.documentElement;
