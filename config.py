@@ -5,21 +5,22 @@ load_dotenv()
 
 class Config:
     # Flask settings
-    SECRET_KEY = os.getenv('SECRET_KEY', 'mysecretkey')
-    DATABASE_URL = os.getenv('DATABASE_URL', 'sqlite:///mydatabase.db')
-    DEBUG = os.getenv('DEBUG', 'False').lower() in ['true', '1', 't']
-    HOST = os.getenv('HOST', '0.0.0.0')
-    PORT = int(os.getenv('PORT', 5000))
+    SECRET_KEY = os.getenv("SECRET_KEY", "mysecretkey")
+    DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///mydatabase.db")
+    DEBUG = os.getenv("DEBUG", "False").lower() in ["true", "1", "t"]
+    HOST = os.getenv("HOST", "0.0.0.0")
+    PORT = int(os.getenv("PORT", 5000))
     UPLOAD_FOLDER = os.getenv("UPLOAD_FOLDER")
-    TEMPLATE_DIR = os.path.join(os.getcwd(), 'core', 'templates')
+    TEMPLATE_DIR = os.path.join(os.getcwd(), "core", "templates")
+    TZ= os.getenv("TZ", "America/Caracas")
     
     # SMTP Configuration
-    SMTP_SERVER = os.getenv('SMTP_SERVER')
-    SMTP_PORT = os.getenv('SMTP_PORT')
-    EMAIL = os.getenv('EMAIL')
-    APP_PASS = os.getenv('APP_PASS')
-    FROM = os.getenv('FROM')
-    FROM_NAME = os.getenv('FROM_NAME')
+    SMTP_SERVER = os.getenv("SMTP_SERVER")
+    SMTP_PORT = os.getenv("SMTP_PORT")
+    EMAIL = os.getenv("EMAIL")
+    APP_PASS = os.getenv("APP_PASS")
+    FROM = os.getenv("FROM")
+    FROM_NAME = os.getenv("FROM_NAME")
 
 def load_smtp_config_from_db():
     from app.models import SMTPProfile

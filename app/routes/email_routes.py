@@ -1,5 +1,4 @@
-import smtplib
-import os
+import os, pytz, smtplib
 from datetime import datetime
 from werkzeug.utils import secure_filename
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -25,7 +24,7 @@ from ..models import Email, List, SendDate
 from ..forms import EmailForm, CSVUploadForm, ScheduleEmailForm
 
 email_bp=Blueprint("email", __name__)
-scheduler=BackgroundScheduler()
+scheduler=BackgroundScheduler(timezone=Config.TZ)
 scheduler.start()
 
 @email_bp.route("/")
@@ -191,22 +190,34 @@ def send_email_route():
 @email_bp.route('/schedule_email', methods=['GET', 'POST'])
 @login_required
 def schedule_email():
-    form = ScheduleEmailForm()
-    templates = [filename for filename in os.listdir(Config.TEMPLATE_DIR) if filename.endswith('.html')]
-    form.template_path.choices = [(template, template) for template in templates]
+    form=ScheduleEmailForm()
+    templates=[filename for filename in os.listdir(Config.TEMPLATE_DIR) if filename.endswith('.html')]
+    form.template_path.choices=[(template, template) for template in templates]
 
     if form.validate_on_submit():
-        subject = form.subject.data
-        template_path = form.template_path.data
-        attachment_path = form.attachment_path.data
-        schedule_time = form.schedule_time.data
-        send_mode = form.send_mode.data
-        receiver = form.receiver.data
-        receiver_name = form.receiver_name.data
-        list_id = form.list_id.data
+        subject=form.subject.data
+        template_path=form.template_path.data
+        attachment_path=form.attachment_path.data
+        schedule_time=form.schedule_time.data
+        send_mode=form.send_mode.data
+        receiver=form.receiver.data
+        receiver_name=form.receiver_name.data
+        list_id=form.list_id.data
 
         # Programar el envío del correo
-        scheduler.add_job(func=send_scheduled_email, trigger='date', run_date=schedule_time, args=[subject, template_path, attachment_path, send_mode, receiver, receiver_name, list_id])
+        scheduler.add_job(
+            func=send_scheduled_email,
+            trigger='date',
+            run_date=schedule_time, 
+            args=[
+                subject, 
+                template_path, 
+                attachment_path, send_mode, 
+                receiver, 
+                receiver_name, 
+                list_id
+                ]
+            )
         
         # Actualizar las métricas en la base de datos
         if send_mode == "individual":

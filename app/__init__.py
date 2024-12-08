@@ -1,4 +1,5 @@
-import atexit
+import atexit, pytz
+from datetime import datetime
 from flask import Flask
 from flask_login import LoginManager
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -15,14 +16,6 @@ login_manager.login_view="auth.login"
 def load_user(user_id):
     return session.query(User).get(int(user_id))
 
-def send_scheduled_email():
-    # Lógica para enviar un correo programado. Ejemplo: enviar un correo a una lista específica
-    email_list=session.query(List).first()  # Seleccionar una lista de ejemplo
-    if email_list:
-        for email in email_list.emails:
-            print(f"Enviando correo a {email.email}")
-            # Aquí iría la lógica para enviar el correo
-
 def create_app():
     app=Flask(__name__, template_folder="templates")
     app.config.from_object(Config)
@@ -37,13 +30,9 @@ def create_app():
 
     initialize_smtp_config(app)
 
-    # Configurar APScheduler
-    scheduler = BackgroundScheduler()
-    scheduler.add_job(func=send_scheduled_email, trigger="interval", minutes=1)  # Programar para ejecutar cada minuto
-    scheduler.start()
 
     # Asegurarse de que el scheduler se detiene cuando se cierra la aplicación
-    atexit.register(lambda: scheduler.shutdown())
+    
 
     # Carga de los blueprints de enrutamiento
     from app.routes import register_blueprints
