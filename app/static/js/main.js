@@ -61,4 +61,40 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem('theme', 'light');
         }
     });
+
+    // Gráfica de histórico de correos
+    if (document.getElementById('emailHistoryChart')) {
+        const jsonData = JSON.parse(document.getElementById('emailHistoryChart').dataset.json);
+
+        var ctx = document.getElementById('emailHistoryChart').getContext('2d');
+        var emailHistoryChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: jsonData.labels,
+                datasets: [{
+                    label: 'Envíos de Correos',
+                    data: jsonData.data,
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'day'
+                        }
+                    },
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
 });
+
+
+
+

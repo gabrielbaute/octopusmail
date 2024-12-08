@@ -9,7 +9,8 @@ from flask import(
     render_template, 
     redirect, 
     url_for, 
-    flash
+    flash,
+    jsonify
     )
 
 from core.importcsv import importcsv
@@ -212,9 +213,19 @@ def delete_email(email_id):
     flash("Email eliminado correctamente!", "success")
     return redirect(url_for("email.show_emails"))
 
-# Ruta para administrar email
+# Ruta para administrar un email específico
 @email_bp.route("/manage_email/<int:email_id>")
 @login_required
 def manage_email(email_id):
     email=session.query(Email).get(email_id)
-    return render_template("manage_email.html", email=email)
+    all_lists=session.query(List).all()
+    
+    # Preparar los datos para el gráfico
+    labels=[date.timestamp.strftime("%Y-%m-%d") for date in email.send_dates]
+    data=[date.timestamp.timestamp() for date in email.send_dates]
+    json_data={
+        'labels': labels,
+        'data': data
+    }
+    
+    return render_template('manage_email.html', email=email, all_lists=all_lists, json_data=json_data)

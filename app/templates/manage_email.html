@@ -5,13 +5,59 @@
 {% block content %}
 <section class="section">
     <div class="container">
-        <h1 class="title">Administrar Email</h1>
+        <h1 class="title">Administrar Email: {{ email.name }}</h1>
         <div class="buttons">
             <a class="button is-info" href="{{ url_for('email.edit_email', email_id=email.id) }}">Editar</a>
             <a class="button is-danger" href="{{ url_for('email.delete_email', email_id=email.id) }}">Eliminar</a>
         </div>
+        
+        <h2 class="subtitle">Listas a las que Pertenece</h2>
+        <table class="table is-fullwidth is-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre de la Lista</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for list in email.lists %}
+                <tr>
+                    <td>{{ list.id }}</td>
+                    <td>{{ list.name }}</td>
+                    <td>
+                        <a class="button is-small is-danger" href="{{ url_for('list.remove_email_from_list', email_id=email.id, list_id=list.id) }}">Eliminar de la Lista</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
         <h2 class="subtitle">Agregar a Listas</h2>
-        <!-- Aquí puedes añadir el formulario para agregar el email a listas -->
+        <form method="POST" action="{{ url_for('list.add_email_to_list', email_id=email.id) }}">
+            <div class="field">
+                <label class="label">Nombre de la Lista</label>
+                <div class="control">
+                    <div class="select">
+                        <select name="list_id">
+                            {% for list in all_lists %}
+                            <option value="{{ list.id }}">{{ list.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="field">
+                <div class="control">
+                    <button class="button is-primary">Agregar a la Lista</button>
+                </div>
+            </div>
+        </form>
+
+        <h2 class="subtitle">Histórico de Correos Enviados</h2>
+        <canvas id="emailHistoryChart" width="400" height="200"></canvas>
     </div>
 </section>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 {% endblock %}

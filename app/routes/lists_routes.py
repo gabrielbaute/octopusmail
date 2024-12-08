@@ -93,3 +93,32 @@ def delete_list(list_id):
 @login_required
 def send_email_to_list(list_name):
     return redirect(url_for("email.send_email_form", list_name=list_name))
+
+# Ruta para agregar email a una lista
+@lists_bp.route('/add_email_to_list/<int:email_id>', methods=['POST'])
+@login_required
+def add_email_to_list(email_id):
+    list_id = request.form.get('list_id')
+    email = session.query(Email).get(email_id)
+    email_list = session.query(List).get(list_id)
+    if email and email_list:
+        email.lists.append(email_list)
+        session.commit()
+        flash('Email agregado a la lista correctamente.', 'success')
+    else:
+        flash('Error al agregar el email a la lista.', 'danger')
+    return redirect(url_for('email.manage_email', email_id=email_id))
+
+# Ruta para remover email de una lista
+@lists_bp.route('/remove_email_from_list/<int:email_id>/<int:list_id>')
+@login_required
+def remove_email_from_list(email_id, list_id):
+    email = session.query(Email).get(email_id)
+    email_list = session.query(List).get(list_id)
+    if email and email_list:
+        email.lists.remove(email_list)
+        session.commit()
+        flash('Email eliminado de la lista correctamente.', 'success')
+    else:
+        flash('Error al eliminar el email de la lista.', 'danger')
+    return redirect(url_for('email.manage_email', email_id=email_id))
